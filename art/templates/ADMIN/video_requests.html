@@ -1,0 +1,53 @@
+{% extends "ADMIN/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <h2>User Video Requests</h2>
+
+        {% if requests %}
+        <div style="overflow-x:auto; margin-top:20px;">
+            <table style="width:100%; border-collapse:collapse; background:white;">
+                <thead>
+                    <tr style="background:#4b49ac; color:white;">
+                        <th style="padding:12px; border:1px solid #ddd;">User</th>
+                        <th style="padding:12px; border:1px solid #ddd;">Video</th>
+                        <th style="padding:12px; border:1px solid #ddd;">Date</th>
+                        <th style="padding:12px; border:1px solid #ddd;">Status</th>
+                        <th style="padding:12px; border:1px solid #ddd;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td style="padding:10px; border:1px solid #ddd;">{{ req.user.loginid.username }}</td>
+                        <td style="padding:10px; border:1px solid #ddd;">{{ req.video.title }}</td>
+                        <td style="padding:10px; border:1px solid #ddd;">{{ req.date }}</td>
+                        <td style="padding:10px; border:1px solid #ddd;">{{ req.status }}</td>
+                        <td style="padding:10px; border:1px solid #ddd;">
+                            {% if req.status == 'pending' %}
+                                <a href="/approve_request?id={{ req.id }}" 
+                                   style="padding:5px 10px; background:#27ae60; color:white; border-radius:4px; text-decoration:none;">
+                                   Approve
+                                </a>
+                                <a href="/reject_request?id={{ req.id }}" 
+                                   style="padding:5px 10px; background:#e74c3c; color:white; border-radius:4px; text-decoration:none;">
+                                   Reject
+                                </a>
+                            {% else %}
+                                <span style="color:gray;">No Action</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>No video requests found.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

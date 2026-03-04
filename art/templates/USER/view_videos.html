@@ -1,0 +1,38 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <h2>Available Videos</h2>
+
+        {% if videos %}
+        <div class="row" style="margin-top:20px;">
+
+            {% for v in videos %}
+            <div class="col-md-4" style="margin-bottom:20px;">
+                <div style="background:white; padding:15px; border-radius:8px; border:1px solid #ddd;">
+
+                    <h4>{{ v.title }}</h4>
+                    <p><strong>Category:</strong> {{ v.category }}</p>
+                    <p>{{ v.description }}</p>
+
+                    <a href="{{ v.video_link }}" target="_blank"
+                       style="display:block; padding:8px 15px; background:#4b49ac; color:white; text-align:center;
+                              border-radius:5px; margin-top:10px; text-decoration:none;">
+                        ▶ Watch Video
+                    </a>
+
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+        {% else %}
+            <p>No videos available.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

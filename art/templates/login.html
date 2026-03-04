@@ -1,0 +1,80 @@
+{% extends "commen.html" %}
+
+{% load static %}
+{% block content %}
+
+<!-- Page section -->
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row">
+            <div class="col-xl-6 p-0">
+                <div class="contact-text">
+                    <span>Welcome Back</span>
+                    <h2>User Login</h2>
+
+                    {% if messages %}
+                    {% for msg in messages %}
+                    <p style="color:red; font-weight:bold;">{{ msg }}</p>
+                    {% endfor %}
+                    {% endif %}
+
+                    <style>
+                        .password-container {
+                            position: relative;
+                            width: 100%;
+                        }
+
+                        .password-container input {
+                            width: 100%;
+                            padding-right: 40px !important;
+                        }
+
+                        .toggle-password {
+                            position: absolute;
+                            right: 15px;
+                            top: 15px;
+                            cursor: pointer;
+                            color: #999;
+                            z-index: 10;
+                        }
+                    </style>
+
+                    <form class="contact-form" method="POST">
+                        {% csrf_token %}
+
+                        <input type="text" name="username" placeholder="Username" required>
+
+                        <div class="password-container">
+                            <input type="password" name="password" id="password" placeholder="Password" required>
+                            <i class="fa fa-eye toggle-password" id="togglePassword"></i>
+                        </div>
+
+                        <button class="site-btn" style="margin-top:15px;">Login</button>
+                    </form>
+
+                    <script>
+                        const togglePassword = document.querySelector('#togglePassword');
+                        const password = document.querySelector('#password');
+
+                        togglePassword.addEventListener('click', function (e) {
+                            // toggle the type attribute
+                            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                            password.setAttribute('type', type);
+                            // toggle the eye slash icon
+                            this.classList.toggle('fa-eye-slash');
+                        });
+                    </script>
+
+                    <p style="margin-top:20px;">
+                        Don't have an account?
+                        <a href="/register/" style="text-decoration: underline;">Register here</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page section end-->
+
+{% endblock %}

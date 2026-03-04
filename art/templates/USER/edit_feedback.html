@@ -1,0 +1,30 @@
+{% extends "USER/commen.html" %}
+
+{% load static %}
+{% block content %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="contact-text">
+                    <h2>Edit Feedback</h2>
+                    <p>Updating your comment for: <strong>{{ feedback.drawing.title }}</strong></p>
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <textarea name="comment" class="form-control" rows="5"
+                                required>{{ feedback.comment }}</textarea>
+                        </div>
+                        <button type="submit" class="site-btn">Update Feedback</button>
+                        <a href="/drawing_detail?id={{ feedback.drawing.id }}" class="btn btn-secondary"
+                            style="margin-left: 10px;">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="contact-text">
+                    <h2>Edit Profile</h2>
+                    <p>Update your personal information below.</p>
+
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="form-group text-center mb-4">
+                            <div
+                                style="width: 120px; height: 120px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 3px solid #ccc;">
+                                {% if user.image %}
+                                <img src="{{ user.image.url }}" alt="Profile"
+                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                {% endif %}
+                            </div>
+                            <label for="image" class="mt-2 text-primary" style="cursor: pointer;">Change Profile
+                                Picture</label>
+                            <input type="file" name="image" id="image" class="form-control-file" style="display: none;"
+                                onchange="this.previousElementSibling.innerText = 'Image Selected'">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="number" name="phone" class="form-control" value="{{ user.phone }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea name="address" class="form-control" rows="3"
+                                required>{{ user.address }}</textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="site-btn">Save Changes</button>
+                            <a href="/profile" class="btn btn-secondary ml-2">Cancel</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

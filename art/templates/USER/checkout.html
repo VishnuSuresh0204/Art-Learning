@@ -1,0 +1,89 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row">
+            <div class="col-12 mb-4">
+                <h2>Secure Checkout</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Order Summary -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="mb-0 text-white">Order Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Review your order details before proceeding.</p>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>Total Amount</strong>
+                                <strong style="font-size: 1.5rem; color: #28a745;">₹{{ total }}</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0 text-white">Payment Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/process_payment/" onsubmit="return validatePayment()">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order.id }}">
+
+                            <div class="form-group">
+                                <label>Name on Card</label>
+                                <input type="text" name="name_on_card" class="form-control" placeholder="John Doe"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" name="account_number" class="form-control"
+                                    placeholder="0000 0000 0000 0000" maxlength="19" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Expiry Date</label>
+                                        <input type="text" name="expiry" class="form-control" placeholder="MM/YY"
+                                            maxlength="5" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>CVV</label>
+                                        <input type="password" name="cvv" class="form-control" placeholder="123"
+                                            maxlength="3" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="site-btn btn-block mt-3">Pay ₹{{ total }} & Complete
+                                Order</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validatePayment() {
+        // Simple client-side validation could go here
+        return true;
+    }
+</script>
+
+{% endblock %}

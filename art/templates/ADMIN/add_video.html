@@ -1,0 +1,40 @@
+{% extends "ADMIN/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <h2>Add New Video</h2>
+
+        <div style="background:white; padding:20px; border-radius:8px; border:1px solid #ddd; width:50%; margin:auto;">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <label>Title</label>
+                <input type="text" name="title" class="form-control" placeholder="Video title" required>
+                
+                <label>Description</label>
+                <textarea name="description" class="form-control" placeholder="Short description"></textarea>
+                
+                <label>Category</label>
+                <input type="text" name="category" class="form-control" placeholder="Category" value="General">
+                
+                <label>Video Link</label>
+                <input type="url" name="video_link" class="form-control" placeholder="YouTube link" required>
+                
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="active" selected>Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                
+                <button type="submit" 
+                        style="margin-top:10px; padding:8px 20px; background:#4b49ac; color:white; border-radius:5px; border:none;">
+                    Add Video
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

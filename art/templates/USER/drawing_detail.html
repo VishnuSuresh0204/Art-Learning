@@ -1,0 +1,72 @@
+{% extends "USER/commen.html" %}
+
+{% load static %}
+{% block content %}
+
+<!-- Page section -->
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row">
+            <div class="col-xl-8 p-0">
+                <div class="contact-text">
+                    <span>Gallery</span>
+                    <h2>{{ drawing.title }}</h2>
+
+                    <div class="drawing-detail" style="margin-bottom: 30px;">
+                        <img src="{{ drawing.image.url }}" alt="{{ drawing.title }}"
+                            style="width:100%; max-width:600px; height:auto; border-radius:10px; margin-bottom: 20px;">
+                        <p><strong>Description:</strong> {{ drawing.description }}</p>
+                        <p><strong>Artist:</strong> {{ drawing.user.name }}</p>
+                        <p><strong>Uploaded on:</strong> {{ drawing.date }}</p>
+                    </div>
+
+                    <hr>
+
+                    <h3>Feedback</h3>
+
+                    {% if feedbacks %}
+                    <div class="feedback-list" style="margin-top: 20px;">
+                        {% for fb in feedbacks %}
+                        <div class="feedback-item" style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                            <p><strong>{{ fb.user.name }}</strong> <small class="text-muted">- {{ fb.date }}</small></p>
+                            <p>{{ fb.comment }}</p>
+                            {% if fb.user.loginid.id == request.session.uid %}
+                            <div class="mt-2">
+                                <a href="/edit_feedback?id={{ fb.id }}"
+                                    style="font-size: 0.8rem; color: #4b49ac; margin-right: 15px;">Edit</a>
+                                <a href="/delete_drawing_feedback_user?id={{ fb.id }}"
+                                    style="font-size: 0.8rem; color: #dc3545;"
+                                    onclick="return confirm('Delete this feedback?');">Delete</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>No feedback yet. Be the first to comment!</p>
+                    {% endif %}
+
+                    <hr>
+
+                    {% if request.session.uid != drawing.user.loginid.id %}
+                    <h4>Leave Feedback</h4>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <textarea name="comment" class="form-control" rows="4"
+                                placeholder="Write your feedback here..." required></textarea>
+                        </div>
+                        <button type="submit" class="site-btn">Submit Feedback</button>
+                    </form>
+                    {% else %}
+                    <p class="text-muted"><em>You cannot review your own drawing.</em></p>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page section end -->
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "ADMIN/commen.html" %}
+
+{% block content %}
+
+<div class="page-section">
+    <div class="container">
+
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-8">
+                <h2>Manage Videos</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <a href="/add_video" class="site-btn">Add Video</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive shadow-sm" style="background: white; border-radius: 10px; padding: 20px;">
+                    <table class="table table-hover align-middle">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Video Link</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for v in videos %}
+                            <tr>
+                                <td>
+                                    <strong>{{ v.title }}</strong>
+                                    {% if v.description %}
+                                    <br><small class="text-muted">{{ v.description|truncatechars:50 }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ v.category }}</td>
+                                <td>
+                                    <a href="{{ v.video_link }}" target="_blank" class="text-primary truncate-link"
+                                        style="max-width: 200px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ v.video_link }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge badge-info">{{ v.status|title }}</span>
+                                </td>
+                                <td>
+                                    <a href="/delete_video?id={{ v.id }}" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Delete this video?')">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

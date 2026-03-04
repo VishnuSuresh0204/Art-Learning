@@ -1,0 +1,84 @@
+{% extends "ADMIN/commen.html" %}
+
+{% load static %}
+{% block content %}
+
+<div class="page-section">
+	<div class="container">
+
+		<div class="row mb-5 text-center">
+			<div class="col-12">
+				<h1 class="display-4">Admin Dashboard</h1>
+				<p class="lead">Welcome to the Art Gallery Management System</p>
+			</div>
+		</div>
+
+		<!-- Dashboard Widgets -->
+		<div class="row justify-content-center">
+
+			<!-- Users Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-primary text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-users fa-3x mb-3"></i>
+						<h4 class="card-title">User Management</h4>
+						<p class="card-text">View registered users, block/unblock accounts.</p>
+						<a href="/view_users" class="btn btn-light mt-2">Manage Users</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Videos Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-info text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-video-camera fa-3x mb-3"></i>
+						<h4 class="card-title">Tutorials</h4>
+						<p class="card-text">Add and manage tutorial videos.</p>
+						<a href="/view_videos" class="btn btn-light mt-2">Manage Videos</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Products Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-success text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-shopping-cart fa-3x mb-3"></i>
+						<h4 class="card-title">Products</h4>
+						<p class="card-text">Manage inventory and shop items.</p>
+						<a href="/view_products" class="btn btn-light mt-2">Manage Products</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Feedback Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-warning text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-comments fa-3x mb-3"></i>
+						<h4 class="card-title">Feedback</h4>
+						<p class="card-text">Review and reply to user inquiries.</p>
+						<a href="/view_feedback" class="btn btn-light mt-2">View Feedback</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Orders Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-danger text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-list-alt fa-3x mb-3"></i>
+						<h4 class="card-title">Orders</h4>
+						<p class="card-text">View and update customer order statuses.</p>
+						<a href="/admin_view_orders" class="btn btn-light mt-2">Manage Orders</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+{% endblock %}

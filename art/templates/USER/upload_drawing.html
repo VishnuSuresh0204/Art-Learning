@@ -1,0 +1,32 @@
+{% extends "USER/commen.html" %}
+
+{% load static %}
+{% block content %}
+
+<!-- Page section -->
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row">
+            <div class="col-xl-6 p-0">
+                <div class="contact-text">
+                    <span>Upload</span>
+                    <h2>Upload Your Drawing</h2>
+
+                    <form method="POST" enctype="multipart/form-data" class="contact-form">
+                        {% csrf_token %}
+                        
+                        <input type="text" name="title" placeholder="Drawing Title" required>
+                        <textarea name="description" placeholder="Description" rows="4"></textarea>
+                        <input type="file" name="image" accept="image/*" required>
+                        
+                        <button type="submit" class="site-btn">Upload Drawing</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page section end -->
+
+{% endblock %}

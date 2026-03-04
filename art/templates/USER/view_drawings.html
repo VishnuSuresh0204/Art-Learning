@@ -1,0 +1,53 @@
+{% extends "USER/commen.html" %}
+
+{% load static %}
+{% block content %}
+
+<!-- Page section -->
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row">
+            <div class="col-12">
+                <div class="contact-text mb-5">
+                    <span>Gallery</span>
+                    <h2>All Uploaded Artwork</h2>
+                </div>
+            </div>
+        </div>
+
+        {% if drawings %}
+        <div class="row">
+            {% for drawing in drawings %}
+            <div class="col-lg-4 col-md-6 mb-5">
+                <div class="card h-100 shadow-sm" style="border: none; border-radius: 12px; overflow: hidden;">
+                    <a href="/drawing_detail?id={{ drawing.id }}" style="text-decoration: none; color: inherit;">
+                        <div style="height: 250px; overflow: hidden;">
+                            <img src="{{ drawing.image.url }}" class="card-img-top" alt="{{ drawing.title }}"
+                                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ drawing.title }}</h5>
+                            <p class="card-text text-muted"><small>By: {{ drawing.user.name }}</small></p>
+                            {% if drawing.description %}
+                            <p class="card-text">{{ drawing.description|truncatechars:100 }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <small class="text-muted">Uploaded {{ drawing.date|timesince }} ago</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No drawings uploaded yet.
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+<!-- Page section end -->
+
+{% endblock %}

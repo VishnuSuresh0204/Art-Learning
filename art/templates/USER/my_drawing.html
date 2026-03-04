@@ -1,0 +1,64 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page section -->
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row mb-5 align-items-center">
+            <div class="col-md-8">
+                <div class="contact-text">
+                    <span>My Drawings</span>
+                    <h2>Uploaded Artwork</h2>
+                </div>
+            </div>
+            <div class="col-md-4 text-right">
+                <a href="/upload_drawing/" class="site-btn">
+                    Upload New Drawing
+                </a>
+            </div>
+        </div>
+
+        {% if drawings %}
+        <div class="row">
+            {% for drawing in drawings %}
+            <div class="col-lg-4 col-md-6 mb-5">
+                <div class="card h-100 shadow-sm" style="border: none; border-radius: 12px; overflow: hidden;">
+                    <a href="/drawing_detail?id={{ drawing.id }}" style="text-decoration: none; color: inherit;">
+                        <div style="height: 250px; overflow: hidden;">
+                            <img src="{{ drawing.image.url }}" class="card-img-top" alt="{{ drawing.title }}"
+                                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ drawing.title }}</h5>
+                            {% if drawing.description %}
+                            <p class="card-text text-muted">{{ drawing.description|truncatechars:100 }}</p>
+                            {% endif %}
+                        </div>
+                        <div
+                            class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                            <small class="text-muted">{{ drawing.date }}</small>
+
+                            <!-- Optional Delete Button -->
+                            <a href="/delete_drawing/?id={{ drawing.id }}" class="text-danger"
+                                onclick="return confirm('Are you sure you want to delete this drawing?');">
+                                <i class="fa fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            <h4>You haven't uploaded any drawings yet.</h4>
+            <p>Share your creativity with the world!</p>
+            <a href="/upload_drawing/" class="site-btn mt-3">Upload your first drawing</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- Page section end -->
+
+{% endblock %}

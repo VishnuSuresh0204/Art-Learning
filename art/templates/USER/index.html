@@ -1,0 +1,83 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page section -->
+<div class="page-section home-page">
+	<div class="hero-slider owl-carousel">
+		<div class="slider-item d-flex align-items-center set-bg" data-setbg="/static/img/slider-bg-1.jpg"
+			data-hash="slide-1">
+			<div class="si-text-box">
+				<span>Photography</span>
+				<h2>Project No. 1</h2>
+				<p>Experience the beauty of captured moments. Discover our exclusive collection of artistic photography
+					and drawings.</p>
+				<a href="/all_drawings" class="site-btn">View Gallery</a>
+			</div>
+			<div class="next-slide-show set-bg" data-setbg="/static/img/slider-bg-2.jpg">
+				<a href="#slide-2" class="ns-btn">Next</a>
+			</div>
+		</div>
+		<div class="slider-item d-flex align-items-center set-bg" data-setbg="/static/img/slider-bg-2.jpg"
+			data-hash="slide-2">
+			<div class="si-text-box">
+				<span>Creativity</span>
+				<h2>Project No. 2</h2>
+				<p>Unleash your imagination. Join our community to share your own artwork and explore the creations of
+					others.</p>
+				<a href="/register" class="site-btn">Join Us</a>
+			</div>
+			<div class="next-slide-show set-bg" data-setbg="/static/img/slider-bg-1.jpg">
+				<a href="#slide-1" class="ns-btn">Next</a>
+			</div>
+		</div>
+	</div>
+	<div id="snh-1"></div>
+</div>
+<!-- Page section end-->
+
+<!-- Features section -->
+<section class="features-section spad">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-4 mb-4">
+				<div class="card text-center shadow-sm border-0" style="border-radius: 15px; padding: 20px;">
+					<i class="fa fa-shopping-bag fa-3x text-primary mb-3"></i>
+					<h4>Shop Products</h4>
+					<p>Browse our collection of professional art supplies.</p>
+					<a href="/user_view_products" class="btn btn-outline-primary mt-2">Go to Shop</a>
+				</div>
+			</div>
+			<div class="col-md-4 mb-4">
+				<div class="card text-center shadow-sm border-0" style="border-radius: 15px; padding: 20px;">
+					<i class="fa fa-truck fa-3x text-success mb-3"></i>
+					<h4>My Orders</h4>
+					<p>Check the status of your purchases.</p>
+					<a href="/my_orders" class="btn btn-outline-success mt-2">View Orders</a>
+				</div>
+			</div>
+			<div class="col-md-4 mb-4">
+				<div class="card text-center shadow-sm border-0" style="border-radius: 15px; padding: 20px;">
+					<i class="fa fa-pencil fa-3x text-info mb-3"></i>
+					<h4>My Gallery</h4>
+					<p>Manage your own artwork submissions.</p>
+					<a href="/view_drawings" class="btn btn-outline-info mt-2">My Drawings</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Features section end -->
+
+<!-- Search model -->
+<div class="search-model">
+	<div class="h-100 d-flex align-items-center justify-content-center">
+		<div class="search-close-switch">x</div>
+		<form class="search-moderl-form">
+			<input type="text" id="search-input" placeholder="Search here.....">
+		</form>
+	</div>
+</div>
+<!-- Search model end -->
+
+{% endblock %}

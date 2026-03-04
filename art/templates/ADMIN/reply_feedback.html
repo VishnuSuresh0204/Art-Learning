@@ -1,0 +1,25 @@
+{% extends "ADMIN/commen.html" %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp" style="width:50%; margin:auto;">
+        <h2>Reply to Feedback</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <p><strong>User:</strong> {{ fb.user.loginid.username }}</p>
+            <p><strong>Message:</strong> {{ fb.message }}</p>
+
+            <label>Reply</label>
+            <textarea name="reply" class="form-control" required>{{ fb.reply }}</textarea>
+
+            <button type="submit"
+                style="margin-top:15px; padding:8px 20px; background:#4b49ac; color:white; border:none; border-radius:5px;">
+                Submit Reply
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
