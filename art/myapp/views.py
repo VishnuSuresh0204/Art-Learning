@@ -45,7 +45,7 @@ def register(request):
         user_obj.save()
 
         messages.success(request, "Registration Successful!")
-        return redirect("/login")
+        return redirect("/login/")
 
     return render(request, "register.html")
 
@@ -82,7 +82,7 @@ def shop_register(request):
         shop_obj.save()
 
         messages.success(request, "Registration Successful! Waiting for admin approval.")
-        return redirect("/login")
+        return redirect("/login/")
 
     return render(request, "register_shop.html")
 
@@ -103,19 +103,19 @@ def login_view(request):
             # Check user type
             if user.userType == "admin":
                 login(request, user)
-                return redirect("/admin_home")
+                return redirect("/admin_home/")
             elif user.userType == "shop":
-                request.session['sid'] = user.id
                 login(request, user)
-                return redirect("/shop_home")
+                request.session['sid'] = user.id
+                return redirect("/shop_home/")
             else:
                 # Custom session for regular users
-                request.session['uid'] = user.id
                 login(request, user)
-                return redirect("/user_home")
+                request.session['uid'] = user.id
+                return redirect("/user_home/")
 
         messages.error(request, "Invalid login credentials or account inactive")
-        return redirect("/login")
+        return redirect("/login/")
 
     return render(request, "login.html")
 
