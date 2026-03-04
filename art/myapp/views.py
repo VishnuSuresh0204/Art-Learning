@@ -50,8 +50,45 @@ def register(request):
     return render(request, "register.html")
 
 
+def shop_register(request):
+    """Shop registration view."""
+    if request.method == "POST":
+        username = request.POST['username']
+        email = request.POST['email']
+        phone = request.POST['phone']
+        address = request.POST['address']
+        password = request.POST['password']
+        image = request.FILES.get('image')
+
+        # Create login object for shop - initially inactive
+        login_obj = Login.objects.create_user(
+            username=username,
+            password=password,
+            userType="shop",
+            viewPass=password
+        )
+        login_obj.is_active = False # Admin must approve
+        login_obj.save()
+
+        shop_obj = Shop(
+            name=username,
+            email=email,
+            phone=phone,
+            address=address,
+            image=image,
+            loginid=login_obj,
+            status="pending"
+        )
+        shop_obj.save()
+
+        messages.success(request, "Registration Successful! Waiting for admin approval.")
+        return redirect("/login")
+
+    return render(request, "register_shop.html")
+
+
 def login_view(request):
-    """Login view handling both User and Admin logins."""
+    """Login view handling User, Shop, and Admin logins."""
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -59,16 +96,25 @@ def login_view(request):
         user = authenticate(username=username, password=password)
 
         if user:
+            if not user.is_active:
+                messages.error(request, "Your account is not active. Please wait for admin approval.")
+                return redirect("/login")
+                
             # Check user type
             if user.userType == "admin":
                 login(request, user)
                 return redirect("/admin_home")
+            elif user.userType == "shop":
+                request.session['sid'] = user.id
+                login(request, user)
+                return redirect("/shop_home")
             else:
                 # Custom session for regular users
                 request.session['uid'] = user.id
+                login(request, user)
                 return redirect("/user_home")
 
-        messages.error(request, "Invalid login credentials")
+        messages.error(request, "Invalid login credentials or account inactive")
         return redirect("/login")
 
     return render(request, "login.html")
@@ -83,10 +129,149 @@ def user_home(request):
     if 'uid' not in request.session:
         return redirect("/login")
 
-    user = Login.objects.get(id=request.session['uid'])
-    profile = User.objects.get(loginid=user)
+    user_login = Login.objects.get(id=request.session['uid'])
+    profile = User.objects.get(loginid=user_login)
 
     return render(request, "USER/index.html", {"user": profile})
+
+
+def shop_home(request):
+    """Shop Dashboard/Home"""
+    if 'sid' not in request.session:
+        return redirect("/login")
+
+    user_login = Login.objects.get(id=request.session['sid'])
+    shop = Shop.objects.get(loginid=user_login)
+
+    return render(request, "SHOP/index.html", {"shop": shop})
+
+
+def shop_add_product(request):
+    """Shop add its own product"""
+    if 'sid' not in request.session:
+        return redirect("/login")
+
+    user_login = Login.objects.get(id=request.session['sid'])
+    shop = Shop.objects.get(loginid=user_login)
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+        category = request.POST.get("category")
+        price = request.POST.get("price")
+        qty = request.POST.get("qty")
+        desc = request.POST.get("desc")
+        image = request.FILES.get("image")
+
+        Products.objects.create(
+            shop=shop,
+            name=name,
+            category=category,
+            price=price,
+            qty=qty,
+            desc=desc,
+            image=image
+        )
+        messages.success(request, "Product added successfully!")
+        return redirect("/shop_view_products")
+
+    return render(request, "SHOP/add_product.html")
+
+
+def shop_view_products(request):
+    """Shop view its own products"""
+    if 'sid' not in request.session:
+        return redirect("/login")
+
+    user_login = Login.objects.get(id=request.session['sid'])
+    shop = Shop.objects.get(loginid=user_login)
+    products = Products.objects.filter(shop=shop)
+    
+    return render(request, "SHOP/view_products.html", {"products": products})
+
+
+def shop_edit_product(request):
+    """Shop edit its own product"""
+    if 'sid' not in request.session:
+        return redirect("/login")
+
+    pid = request.GET.get("id")
+    product = get_object_or_404(Products, id=pid)
+    
+    # Security check
+    user_login = Login.objects.get(id=request.session['sid'])
+    shop = Shop.objects.get(loginid=user_login)
+    if product.shop != shop:
+        return redirect("/shop_view_products")
+
+    if request.method == "POST":
+        product.name = request.POST.get("name")
+        product.category = request.POST.get("category")
+        product.price = request.POST.get("price")
+        product.qty = request.POST.get("qty")
+        product.desc = request.POST.get("desc")
+        product.status = request.POST.get("status")
+
+        if request.FILES.get("image"):
+            product.image = request.FILES.get("image")
+
+        product.save()
+        messages.success(request, "Product updated!")
+        return redirect("/shop_view_products")
+
+    return render(request, "SHOP/edit_product.html", {"product": product})
+
+
+def shop_delete_product(request):
+    """Shop delete its own product"""
+    if 'sid' not in request.session:
+        return redirect("/login")
+
+    pid = request.GET.get("id")
+    product = get_object_or_404(Products, id=pid)
+    
+    # Security check
+    user_login = Login.objects.get(id=request.session['sid'])
+    shop = Shop.objects.get(loginid=user_login)
+    if product.shop == shop:
+        product.delete()
+        messages.success(request, "Product deleted.")
+        
+    return redirect("/shop_view_products")
+
+
+def shop_view_bookings(request):
+    """Shop view bookings for its products"""
+    if 'sid' not in request.session:
+        return redirect("/login")
+
+    user_login = Login.objects.get(id=request.session['sid'])
+    shop = Shop.objects.get(loginid=user_login)
+    
+    # Cart items for this shop's products where the order is paid or beyond
+    cart_items = Cart.objects.filter(product__shop=shop).exclude(order__status="Pending").order_by('-date')
+    
+    return render(request, "SHOP/view_bookings.html", {"cart_items": cart_items})
+
+
+def shop_update_booking_status(request):
+    """Shop updates status of a specific booking item"""
+    if 'sid' not in request.session:
+        return redirect("/login")
+
+    if request.method == "POST":
+        cart_id = request.POST.get("cid")
+        new_status = request.POST.get("status")
+        cart_item = get_object_or_404(Cart, id=cart_id)
+        
+        # Security check
+        user_login = Login.objects.get(id=request.session['sid'])
+        shop = Shop.objects.get(loginid=user_login)
+        if cart_item.product.shop == shop:
+            cart_item.status = new_status
+            cart_item.save()
+            messages.success(request, f"Booking status updated to {new_status}")
+            
+    return redirect("/shop_view_bookings")
 
 
 def profile(request):
@@ -560,6 +745,65 @@ def delete_user(request):
         user.loginid.delete()  # deletes login first
         user.delete()           # deletes user profile
     return redirect("/view_users")
+
+
+def view_shops(request):
+    """Admin view all shops"""
+    if not request.user.is_authenticated or request.user.userType != "admin":
+        return redirect("/login")
+
+    shops = Shop.objects.all()
+    return render(request, "ADMIN/view_shops.html", {"shops": shops})
+
+
+def approve_shop(request):
+    """Approve a shop registration"""
+    shop_id = request.GET.get("id")
+    if shop_id:
+        shop = Shop.objects.get(id=shop_id)
+        shop.status = "approved"
+        shop.save()
+        shop.loginid.is_active = True
+        shop.loginid.save()
+        messages.success(request, f"Shop {shop.name} approved successfully!")
+    return redirect("/view_shops")
+
+
+def reject_shop(request):
+    """Reject a shop registration"""
+    shop_id = request.GET.get("id")
+    if shop_id:
+        shop = Shop.objects.get(id=shop_id)
+        shop.status = "rejected"
+        shop.save()
+        shop.loginid.is_active = False
+        shop.loginid.save()
+        messages.warning(request, f"Shop {shop.name} rejected.")
+    return redirect("/view_shops")
+
+
+def block_shop(request):
+    """Block a shop"""
+    shop_id = request.GET.get("id")
+    if shop_id:
+        shop = Shop.objects.get(id=shop_id)
+        shop.status = "blocked"
+        shop.save()
+        shop.loginid.is_active = False
+        shop.loginid.save()
+    return redirect("/view_shops")
+
+
+def unblock_shop(request):
+    """Unblock a shop"""
+    shop_id = request.GET.get("id")
+    if shop_id:
+        shop = Shop.objects.get(id=shop_id)
+        shop.status = "approved"
+        shop.save()
+        shop.loginid.is_active = True
+        shop.loginid.save()
+    return redirect("/view_shops")
 
 
 def admin_add_video(request):

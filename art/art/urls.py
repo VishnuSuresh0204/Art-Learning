@@ -11,11 +11,19 @@ urlpatterns = [
     # --- AUTHENTICATION ---
     path('', views.home),
     path('register/', views.register),
+    path('shop_register/', views.shop_register),
     path('login/', views.login_view),
     path('about/', views.about),
 
     # --- USER PROFILE & NAVIGATION ---
     path('user_home/', views.user_home),
+    path('shop_home/', views.shop_home),
+    path('shop_add_product/', views.shop_add_product),
+    path('shop_view_products/', views.shop_view_products),
+    path('shop_edit_product/', views.shop_edit_product),
+    path('shop_delete_product/', views.shop_delete_product),
+    path('shop_view_bookings/', views.shop_view_bookings),
+    path('shop_update_booking_status/', views.shop_update_booking_status),
     path('profile', views.profile),
     path('edit_profile', views.edit_profile),
 
@@ -46,6 +54,11 @@ urlpatterns = [
     path("block_user/", views.block_user),
     path("unblock_user/", views.unblock_user),
     path("delete_user/", views.delete_user),
+    path("view_shops/", views.view_shops),
+    path("approve_shop/", views.approve_shop),
+    path("reject_shop/", views.reject_shop),
+    path("block_shop/", views.block_shop),
+    path("unblock_shop/", views.unblock_shop),
 
     # --- ADMIN: VIDEOS ---
     path("add_video/", views.admin_add_video),
