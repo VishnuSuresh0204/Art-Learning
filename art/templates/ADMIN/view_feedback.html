@@ -2,132 +2,243 @@
 
 {% block content %}
 
-<div class="page-section">
+<style>
+    .feedback-dashboard {
+        padding: 60px 0;
+        background: #f8fafc;
+        min-height: 100vh;
+    }
+
+    .section-glass-card {
+        background: white;
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        margin-bottom: 50px;
+    }
+
+    .hub-header {
+        margin-bottom: 35px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 20px;
+    }
+
+    .hub-header h2 {
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hub-header i {
+        color: #4b49ac;
+        font-size: 1.5rem;
+    }
+
+    .premium-table {
+        margin: 0;
+    }
+
+    .premium-table thead th {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 1.5px;
+        padding: 15px 20px;
+    }
+
+    .premium-table tbody td {
+        padding: 20px;
+        vertical-align: middle;
+        border-top: 1px solid #f8fafc;
+    }
+
+    .subject-box {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .subject-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        object-fit: cover;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .subject-text {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 0.95rem;
+    }
+
+    .user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f1f5f9;
+        padding: 4px 12px;
+        border-radius: 100px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: #475569;
+    }
+
+    .rating-stars {
+        color: #fbbf24;
+        letter-spacing: 2px;
+        font-size: 0.8rem;
+    }
+
+    .comment-text {
+        max-width: 300px;
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .btn-delete-circle {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fef2f2;
+        color: #ef4444;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-delete-circle:hover {
+        background: #ef4444;
+        color: white;
+        transform: scale(1.1);
+    }
+</style>
+
+<div class="feedback-dashboard">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2>Product Feedback</h2>
-                <p class="text-muted">Feedback from users on products purchased in the shop.</p>
+
+        <!-- Product Feedback Section -->
+        <div class="section-glass-card">
+            <div class="hub-header">
+                <h2><i class="fa fa-shopping-cart"></i> Product Reviews</h2>
             </div>
+
+            {% if product_feedbacks %}
+            <div class="table-responsive">
+                <table class="table premium-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Reviewer</th>
+                            <th>Experience</th>
+                            <th>Message</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in product_feedbacks %}
+                        <tr>
+                            <td>
+                                <div class="subject-box">
+                                    {% if f.product.image %}
+                                    <img src="{{ f.product.image.url }}" class="subject-img shadow-sm" alt="">
+                                    {% endif %}
+                                    <span class="subject-text">{{ f.product.name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="user-pill">
+                                    <i class="fa fa-user-circle"></i> {{ f.user.name }}
+                                </div>
+                                <div class="small text-muted mt-1">{{ f.date|date:"M d" }}</div>
+                            </td>
+                            <td>
+                                <div class="rating-stars">
+                                    {% if f.rating == 5 %}★★★★★{% elif f.rating == 4 %}★★★★{% elif f.rating == 3 %}★★★{%
+                                    elif f.rating == 2 %}★★{% else %}★{% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <p class="comment-text mb-0">{{ f.comment|truncatechars:80 }}</p>
+                            </td>
+                            <td>
+                                <a href="/delete_product_feedback/?id={{ f.id }}" class="btn-delete-circle"
+                                    onclick="return confirm('Remove feedback?')">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">No product reviews yet.</div>
+            {% endif %}
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                {% if product_feedbacks %}
-                <div class="table-responsive shadow-sm" style="background: white; border-radius: 10px; padding: 20px;">
-                    <table class="table table-hover align-middle">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Product</th>
-                                <th>User</th>
-                                <th>Rating</th>
-                                <th>Comment</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for f in product_feedbacks %}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        {% if f.product.image %}
-                                        <img src="{{ f.product.image.url }}" alt="{{ f.product.name }}"
-                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
-                                        {% endif %}
-                                        <span>{{ f.product.name }}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <strong>{{ f.user.name|default:f.user.loginid.username }}</strong><br>
-                                    <small class="text-muted">{{ f.user.email }}</small>
-                                </td>
-                                <td>
-                                    <span class="text-warning">
-                                        {% if f.rating == 5 %}⭐⭐⭐⭐⭐{% endif %}
-                                        {% if f.rating == 4 %}⭐⭐⭐⭐{% endif %}
-                                        {% if f.rating == 3 %}⭐⭐⭐{% endif %}
-                                        {% if f.rating == 2 %}⭐⭐{% endif %}
-                                        {% if f.rating == 1 %}⭐{% endif %}
-                                    </span>
-                                </td>
-                                <td>{{ f.comment }}</td>
-                                <td>{{ f.date }}</td>
-                                <td>
-                                    <a href="/delete_product_feedback?id={{ f.id }}"
-                                        class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Delete this feedback?')">Delete</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="alert alert-info">No product feedback received yet.</div>
-                {% endif %}
+        <!-- Drawing Feedback Section -->
+        <div class="section-glass-card">
+            <div class="hub-header">
+                <h2><i class="fa fa-paint-brush"></i> Artwork Appreciation</h2>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="page-section mt-5">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2>Drawing Feedback</h2>
-                <p class="text-muted">Comments from users on uploaded artwork.</p>
+            {% if drawing_feedbacks %}
+            <div class="table-responsive">
+                <table class="table premium-table">
+                    <thead>
+                        <tr>
+                            <th>Artwork</th>
+                            <th>Artist</th>
+                            <th>Reviewer</th>
+                            <th>Comment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in drawing_feedbacks %}
+                        <tr>
+                            <td>
+                                <div class="subject-box">
+                                    {% if f.drawing.image %}
+                                    <img src="{{ f.drawing.image.url }}" class="subject-img shadow-sm" alt="">
+                                    {% endif %}
+                                    <span class="subject-text">{{ f.drawing.title }}</span>
+                                </div>
+                            </td>
+                            <td><span class="font-weight-bold text-muted small">{{ f.drawing.user.name }}</span></td>
+                            <td>
+                                <div class="user-pill"><i class="fa fa-user-circle"></i> {{ f.user.name }}</div>
+                            </td>
+                            <td>
+                                <p class="comment-text mb-0">{{ f.comment|truncatechars:100 }}</p>
+                            </td>
+                            <td>
+                                <a href="/delete_drawing_feedback/?id={{ f.id }}" class="btn-delete-circle"
+                                    onclick="return confirm('Remove feedback?')">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">No artwork appreciation yet.</div>
+            {% endif %}
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                {% if drawing_feedbacks %}
-                <div class="table-responsive shadow-sm" style="background: white; border-radius: 10px; padding: 20px;">
-                    <table class="table table-hover align-middle">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Drawing</th>
-                                <th>Artist</th>
-                                <th>Reviewer</th>
-                                <th>Comment</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for f in drawing_feedbacks %}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        {% if f.drawing.image %}
-                                        <img src="{{ f.drawing.image.url }}" alt="{{ f.drawing.title }}"
-                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
-                                        {% endif %}
-                                        <span>{{ f.drawing.title }}</span>
-                                    </div>
-                                </td>
-                                <td>{{ f.drawing.user.name|default:f.drawing.user.loginid.username }}</td>
-                                <td>
-                                    <strong>{{ f.user.name|default:f.user.loginid.username }}</strong>
-                                </td>
-                                <td>{{ f.comment }}</td>
-                                <td>{{ f.date|date:"F d, Y" }}</td>
-                                <td>
-                                    <a href="/delete_drawing_feedback?id={{ f.id }}"
-                                        class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Delete this feedback?')">Delete</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="alert alert-info">No drawing feedback received yet.</div>
-                {% endif %}
-            </div>
-        </div>
     </div>
 </div>
 

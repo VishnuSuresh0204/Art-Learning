@@ -824,7 +824,7 @@ def admin_add_video(request):
         )
 
         messages.success(request, "Video added successfully!")
-        return redirect("/view_videos")
+        return redirect("/view_videos/")
 
     return render(request, "ADMIN/add_video.html")
 
@@ -902,7 +902,7 @@ def delete_product_feedback(request):
     fid = request.GET.get("id")
     if fid:
         ProductFeedback.objects.filter(id=fid).delete()
-    return redirect("/view_feedback")
+    return redirect("/view_feedback/")
 
 def delete_drawing_feedback(request):
     """Admin delete drawing feedback"""

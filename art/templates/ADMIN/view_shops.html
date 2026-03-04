@@ -2,72 +2,237 @@
 
 {% block content %}
 
-<div class="page-section">
+<style>
+    .admin-container {
+        padding: 50px 0;
+        background: #f8fafc;
+        min-height: 90vh;
+    }
+
+    .table-header-box {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-header-box h2 {
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0;
+        font-size: 1.75rem;
+    }
+
+    .premium-table-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f1f5f9;
+        padding: 10px;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        border: none;
+        color: #64748b;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 20px;
+    }
+
+    .table tbody td {
+        padding: 20px;
+        vertical-align: middle;
+        border-color: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .badge-premium {
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-pending {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .badge-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-blocked {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .btn-action-group {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-premium-sm {
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none !important;
+        border: 1px solid transparent;
+    }
+
+    .btn-approve {
+        background: #ecfdf5;
+        color: #059669;
+        border-color: #a7f3d0;
+    }
+
+    .btn-approve:hover {
+        background: #d1fae5;
+        transform: translateY(-2px);
+    }
+
+    .btn-reject {
+        background: #fff1f2;
+        color: #e11d48;
+        border-color: #fecdd3;
+    }
+
+    .btn-reject:hover {
+        background: #ffe4e6;
+        transform: translateY(-2px);
+    }
+
+    .btn-block {
+        background: #fafafa;
+        color: #64748b;
+        border-color: #e2e8f0;
+    }
+
+    .btn-block:hover {
+        background: #fee2e2;
+        color: #ef4444;
+        border-color: #fecaca;
+        transform: translateY(-2px);
+    }
+
+    .btn-unblock {
+        background: #eff6ff;
+        color: #2563eb;
+        border-color: #bfdbfe;
+    }
+
+    .btn-unblock:hover {
+        background: #dbeafe;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="admin-container">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2>Shop Management</h2>
-            </div>
+
+        <div class="table-header-box">
+            <h2>Shop Management</h2>
+            <div class="text-muted font-weight-bold">{{ shops.count }} Partner Shops</div>
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="table-responsive shadow-sm" style="background: white; border-radius: 10px; padding: 20px;">
-                    <table class="table table-hover align-middle">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Shop Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Address</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for s in shops %}
-                            <tr>
-                                <td>{{ s.name }}</td>
-                                <td>{{ s.email }}</td>
-                                <td>{{ s.phone }}</td>
-                                <td>{{ s.address }}</td>
-                                <td>
-                                    {% if s.status == 'approved' %}
-                                    <span class="badge badge-success">Approved</span>
-                                    {% elif s.status == 'pending' %}
-                                    <span class="badge badge-warning">Pending</span>
-                                    {% elif s.status == 'rejected' %}
-                                    <span class="badge badge-danger">Rejected</span>
-                                    {% elif s.status == 'blocked' %}
-                                    <span class="badge badge-dark">Blocked</span>
+        <div class="premium-table-card">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Shop Name</th>
+                            <th>Contact details</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in shops %}
+                        <tr>
+                            <td>
+                                <div class="font-weight-bold">{{ s.name }}</div>
+                                <div class="text-muted small">@{{ s.loginid.username }}</div>
+                            </td>
+                            <td>
+                                <div style="font-size: 0.9rem;">{{ s.email }}</div>
+                                <div class="text-muted small">{{ s.phone }}</div>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ s.address|truncatechars:30 }}</small>
+                            </td>
+                            <td>
+                                {% if s.status == 'approved' %}
+                                <span class="badge-premium badge-approved">Approved</span>
+                                {% elif s.status == 'pending' %}
+                                <span class="badge-premium badge-pending">Pending</span>
+                                {% elif s.status == 'rejected' %}
+                                <span class="badge-premium badge-rejected">Rejected</span>
+                                {% elif s.status == 'blocked' %}
+                                <span class="badge-premium badge-blocked">Blocked</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-action-group">
+                                    {% if s.status == 'pending' or s.status == 'rejected' %}
+                                    <a href="/approve_shop/?id={{ s.id }}" class="btn-premium-sm btn-approve">
+                                        <i class="fa fa-check"></i> Approve
+                                    </a>
                                     {% endif %}
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        {% if s.status == 'pending' or s.status == 'rejected' %}
-                                        <a href="/approve_shop?id={{ s.id }}"
-                                            class="btn btn-sm btn-outline-success">Approve</a>
-                                        {% endif %}
 
-                                        {% if s.status == 'pending' %}
-                                        <a href="/reject_shop?id={{ s.id }}"
-                                            class="btn btn-sm btn-outline-danger">Reject</a>
-                                        {% endif %}
+                                    {% if s.status == 'pending' %}
+                                    <a href="/reject_shop/?id={{ s.id }}" class="btn-premium-sm btn-reject">
+                                        <i class="fa fa-times"></i> Reject
+                                    </a>
+                                    {% endif %}
 
-                                        {% if s.status == 'approved' %}
-                                        <a href="/block_shop?id={{ s.id }}"
-                                            class="btn btn-sm btn-outline-warning">Block</a>
-                                        {% elif s.status == 'blocked' %}
-                                        <a href="/unblock_shop?id={{ s.id }}"
-                                            class="btn btn-sm btn-outline-success">Unblock</a>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                    {% if s.status == 'approved' %}
+                                    <a href="/block_shop/?id={{ s.id }}" class="btn-premium-sm btn-block">
+                                        <i class="fa fa-ban"></i> Block
+                                    </a>
+                                    {% elif s.status == 'blocked' %}
+                                    <a href="/unblock_shop/?id={{ s.id }}" class="btn-premium-sm btn-unblock">
+                                        <i class="fa fa-unlock"></i> Unblock
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="fa fa-shopping-bag fa-3x text-muted opacity-25 mb-3 d-block"></i>
+                                <p class="text-muted mb-0">No shops registered yet.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
