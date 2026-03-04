@@ -1,43 +1,203 @@
-
 {% extends "commen.html" %}
-
 {% load static %}
+
 {% block content %}
+<style>
+    .auth-page {
+        padding: 80px 0;
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        position: relative;
+        overflow: hidden;
+    }
 
-<!-- Page section -->
-<div class="page-section contact-page">
-    <div class="contact-warp">
-        <div class="row">
-            <div class="col-xl-6 p-0">
-                <div class="contact-text">
-                    <span>Join Us</span>
-                    <h2>User Registration</h2>
+    .auth-page::before {
+        content: '';
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 40%;
+        height: 60%;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+    }
 
-                    <form class="contact-form" method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
+    .auth-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 600px;
+        padding: 50px;
+        position: relative;
+        z-index: 10;
+        animation: fadeIn 0.6s ease;
+    }
 
-                        <input type="text" name="username" placeholder="Username" required>
-                        <input type="email" name="email" placeholder="Email" required>
+    .auth-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
 
-                        <input type="text" name="phone" placeholder="Phone Number" required>
+    .auth-header h2 {
+        font-weight: 800;
+        font-size: 2.2rem;
+        color: var(--text-main);
+        margin-bottom: 10px;
+    }
 
-                        <input type="text" name="address" placeholder="Address" required>
+    .auth-header p {
+        color: var(--text-muted);
+    }
 
-                        <label style="color:#777; margin-top:10px;">Profile Image</label>
-                        <input type="file" name="image" style="padding:10px; border:1px solid #ddd;" required>
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
 
-                        
+    .form-group {
+        margin-bottom: 25px;
+    }
 
-                        <input type="password" name="password" placeholder="Password" required>
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
 
-                        <button class="site-btn" style="margin-top:15px;">Register Now</button>
-                    </form>
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
 
+    .form-control-premium {
+        width: 100%;
+        padding: 14px 20px;
+        background: white;
+        border: 2px solid #f1f5f9;
+        border-radius: 14px;
+        font-size: 1rem;
+        transition: var(--transition);
+    }
+
+    .form-control-premium:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .file-input-wrapper {
+        position: relative;
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        transition: var(--transition);
+    }
+
+    .file-input-wrapper:hover {
+        border-color: var(--primary);
+        background: #f0f9ff;
+    }
+
+    .btn-auth {
+        width: 100%;
+        background: var(--primary);
+        color: white;
+        padding: 16px;
+        border: none;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: var(--transition);
+        margin-top: 10px;
+    }
+
+    .btn-auth:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    }
+
+    .auth-footer {
+        margin-top: 35px;
+        text-align: center;
+        padding-top: 25px;
+        border-top: 1px solid #f1f5f9;
+        font-size: 0.95rem;
+    }
+
+    .auth-footer a {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-card {
+            padding: 30px 20px;
+        }
+    }
+</style>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Join Our Gallery</h2>
+            <p>Create an artist account to share your vision</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control-premium" placeholder="johndoe" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="form-control-premium" placeholder="john@example.com"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" class="form-control-premium" placeholder="+1 234 567 890" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control-premium" placeholder="••••••••" required>
+                </div>
+                <div class="form-group full-width">
+                    <label>Contact Address</label>
+                    <input type="text" name="address" class="form-control-premium"
+                        placeholder="123 Street, City, Country" required>
+                </div>
+                <div class="form-group full-width">
+                    <label>Profile Image</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="image" style="width: 100%;" required>
+                        <p class="text-muted small mt-2">Upload a professional portrait or artwork avatar</p>
+                    </div>
                 </div>
             </div>
+
+            <button type="submit" class="btn-auth">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/login/">Sign In</a></p>
+            <p class="mt-2"><a href="/shop_register/">Register as a Shop instead?</a></p>
         </div>
     </div>
 </div>
-<!-- Page section end-->
-
 {% endblock %}
