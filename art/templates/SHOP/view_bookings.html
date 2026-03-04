@@ -59,15 +59,15 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="cid" value="{{ item.id }}">
                                         <select name="status" class="form-control form-control-sm" style="width: auto;">
-                                            <option value="pending" {% if item.status == 'pending' %}selected{% endif %}>
+                                            <option value="pending" {% if item.status=='pending' %}selected{% endif %}>
                                                 Pending</option>
-                                            <option value="Accepted" {% if item.status == 'Accepted' %}selected{% endif
+                                            <option value="Accepted" {% if item.status=='Accepted' %}selected{% endif
                                                 %}>Accept</option>
-                                            <option value="Rejected" {% if item.status == 'Rejected' %}selected{% endif
+                                            <option value="Rejected" {% if item.status=='Rejected' %}selected{% endif
                                                 %}>Reject</option>
-                                            <option value="Shipped" {% if item.status == 'Shipped' %}selected{% endif %}>
+                                            <option value="Shipped" {% if item.status=='Shipped' %}selected{% endif %}>
                                                 Shipped</option>
-                                            <option value="Delivered" {% if item.status == 'Delivered' %}selected{% endif
+                                            <option value="Delivered" {% if item.status=='Delivered' %}selected{% endif
                                                 %}>Delivered</option>
                                         </select>
                                         <button type="submit" class="btn btn-sm btn-primary">Update</button>
