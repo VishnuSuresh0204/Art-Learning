@@ -1,0 +1,40 @@
+{% extends "SHOP/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <h2>Add New Product</h2>
+
+        <div style="background:white; padding:20px; border-radius:8px; border:1px solid #ddd; width:60%; margin:auto;">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <label>Product Name</label>
+                <input type="text" name="name" class="form-control" placeholder="Product name" required>
+
+                <label>Category</label>
+                <input type="text" name="category" class="form-control" placeholder="Category" required>
+
+                <label>Price</label>
+                <input type="number" name="price" class="form-control" placeholder="Price" required>
+
+                <label>Quantity</label>
+                <input type="number" name="qty" class="form-control" placeholder="Quantity" required>
+
+                <label>Description</label>
+                <textarea name="desc" class="form-control" placeholder="Product description" required></textarea>
+
+                <label>Product Image</label>
+                <input type="file" name="image" class="form-control" required>
+
+                <button type="submit"
+                    style="margin-top:20px; padding:12px 30px; background:#4b49ac; color:white; border-radius:5px; border:none; width:100%;">
+                    Add Product
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
