@@ -847,31 +847,6 @@ def delete_video(request):
     return redirect("/view_videos")
 
 
-def add_product(request):
-    """Admin add new product"""
-    if request.method == "POST":
-        name = request.POST.get("name")
-        category = request.POST.get("category")
-        price = request.POST.get("price")
-        qty = request.POST.get("qty")
-        desc = request.POST.get("desc")
-        image = request.FILES.get("image")
-
-        Products.objects.create(
-            name=name,
-            category=category,
-            price=price,
-            qty=qty,
-            desc=desc,
-            image=image
-        )
-
-        return render(request, "ADMIN/add_product.html", {
-            "msg": "Product added successfully!"
-        })
-
-    return render(request, "ADMIN/add_product.html")
-
 def admin_view_drawings(request):
     """Admin view all user drawings with feedback"""
     if not request.user.is_authenticated or request.user.userType != "admin":
@@ -884,42 +859,6 @@ def admin_view_drawings(request):
         d.feedbacks = DrawingFeedback.objects.filter(drawing=d).order_by('-date')
         
     return render(request, "ADMIN/view_drawings.html", {"drawings": drawings})
-
-
-def view_products(request):
-    """Admin view all products"""
-    products = Products.objects.all()
-    return render(request, "ADMIN/view_products.html", {"products": products})
-
-
-def edit_product(request):
-    """Admin edit product"""
-    pid = request.GET.get("id")
-    product = Products.objects.get(id=pid)
-
-    if request.method == "POST":
-        product.name = request.POST.get("name")
-        product.category = request.POST.get("category")
-        product.price = request.POST.get("price")
-        product.qty = request.POST.get("qty")
-        product.desc = request.POST.get("desc")
-        product.status = request.POST.get("status")
-
-        if request.FILES.get("image"):
-            product.image = request.FILES.get("image")
-
-        product.save()
-        return redirect("/view_products/")
-
-    return render(request, "ADMIN/edit_product.html", {"product": product})
-
-
-def delete_product(request):
-    """Admin delete product"""
-    pid = request.GET.get("id")
-    product = Products.objects.get(id=pid)
-    product.delete()
-    return redirect("/view_products/")
 
 
 def admin_view_feedback(request):
@@ -955,30 +894,6 @@ def delete_drawing_feedback(request):
     if fid:
         DrawingFeedback.objects.filter(id=fid).delete()
     return redirect(request.META.get('HTTP_REFERER', '/view_feedback'))
-
-def admin_view_orders(request):
-    """Admin view all orders (Paid and beyond)"""
-    if not request.user.is_authenticated or request.user.userType != "admin":
-        return redirect("/login")
-
-    orders = Order.objects.exclude(status="Pending").order_by('-date')
-    return render(request, "ADMIN/view_orders.html", {"orders": orders})
-
-
-def update_order_status(request):
-    """Admin update order status"""
-    if not request.user.is_authenticated or request.user.userType != "admin":
-        return redirect("/login")
-
-    if request.method == "POST":
-        oid = request.POST.get("oid")
-        new_status = request.POST.get("status")
-        order = get_object_or_404(Order, id=oid)
-        order.status = new_status
-        order.save()
-        messages.success(request, f"Order #{oid} status updated to {new_status}")
-    
-    return redirect("/admin_view_orders")
 
 
 def my_orders(request):

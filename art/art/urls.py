@@ -66,10 +66,6 @@ urlpatterns = [
     path("view_videos/", views.view_videos),
     
     # --- ADMIN: PRODUCTS ---
-    path("add_product/", views.add_product),
-    path("view_products/", views.view_products),
-    path("edit_product/", views.edit_product),
-    path("delete_product/", views.delete_product),
     path("admin_view_drawings/", views.admin_view_drawings),
     
     # --- ADMIN: FEEDBACK ---
@@ -78,8 +74,6 @@ urlpatterns = [
     path("delete_drawing_feedback/", views.delete_drawing_feedback),
 
     # --- ORDERS ---
-    path("admin_view_orders/", views.admin_view_orders),
-    path("update_order_status/", views.update_order_status),
     path("my_orders/", views.my_orders),
     path("user_order_details/", views.user_order_details),
     path("add_product_feedback/", views.add_product_feedback),
