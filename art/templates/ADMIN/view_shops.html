@@ -1,0 +1,76 @@
+{% extends "ADMIN/commen.html" %}
+
+{% block content %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2>Shop Management</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive shadow-sm" style="background: white; border-radius: 10px; padding: 20px;">
+                    <table class="table table-hover align-middle">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Shop Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in shops %}
+                            <tr>
+                                <td>{{ s.name }}</td>
+                                <td>{{ s.email }}</td>
+                                <td>{{ s.phone }}</td>
+                                <td>{{ s.address }}</td>
+                                <td>
+                                    {% if s.status == 'approved' %}
+                                    <span class="badge badge-success">Approved</span>
+                                    {% elif s.status == 'pending' %}
+                                    <span class="badge badge-warning">Pending</span>
+                                    {% elif s.status == 'rejected' %}
+                                    <span class="badge badge-danger">Rejected</span>
+                                    {% elif s.status == 'blocked' %}
+                                    <span class="badge badge-dark">Blocked</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        {% if s.status == 'pending' or s.status == 'rejected' %}
+                                        <a href="/approve_shop?id={{ s.id }}"
+                                            class="btn btn-sm btn-outline-success">Approve</a>
+                                        {% endif %}
+
+                                        {% if s.status == 'pending' %}
+                                        <a href="/reject_shop?id={{ s.id }}"
+                                            class="btn btn-sm btn-outline-danger">Reject</a>
+                                        {% endif %}
+
+                                        {% if s.status == 'approved' %}
+                                        <a href="/block_shop?id={{ s.id }}"
+                                            class="btn btn-sm btn-outline-warning">Block</a>
+                                        {% elif s.status == 'blocked' %}
+                                        <a href="/unblock_shop?id={{ s.id }}"
+                                            class="btn btn-sm btn-outline-success">Unblock</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
