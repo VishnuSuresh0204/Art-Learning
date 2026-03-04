@@ -744,7 +744,7 @@ def delete_user(request):
         user = User.objects.get(id=user_id)
         user.loginid.delete()  # deletes login first
         user.delete()           # deletes user profile
-    return redirect("/view_users")
+    return redirect("/view_users/")
 
 
 def view_shops(request):
@@ -766,7 +766,7 @@ def approve_shop(request):
         shop.loginid.is_active = True
         shop.loginid.save()
         messages.success(request, f"Shop {shop.name} approved successfully!")
-    return redirect("/view_shops")
+    return redirect("/view_shops/")
 
 
 def reject_shop(request):
@@ -779,7 +779,7 @@ def reject_shop(request):
         shop.loginid.is_active = False
         shop.loginid.save()
         messages.warning(request, f"Shop {shop.name} rejected.")
-    return redirect("/view_shops")
+    return redirect("/view_shops/")
 
 
 def block_shop(request):
