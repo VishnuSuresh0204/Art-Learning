@@ -31,52 +31,92 @@
                             {% for item in cart_items %}
                             <tr>
                                 <td>#{{ item.order.id }}</td>
+
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
-                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                                        <img src="{{ item.product.image.url }}"
+                                             alt="{{ item.product.name }}"
+                                             style="width:50px;height:50px;object-fit:cover;border-radius:5px;margin-right:10px;">
                                         {{ item.product.name }}
                                     </div>
                                 </td>
+
                                 <td>{{ item.order.customer.name }}</td>
                                 <td>{{ item.qnty }}</td>
                                 <td>₹{{ item.amt }}</td>
                                 <td>{{ item.date }}</td>
+
+                                <!-- Booking Status Badge -->
                                 <td>
                                     {% if item.status == 'pending' %}
-                                    <span class="badge badge-warning">Pending</span>
+                                        <span class="badge badge-warning">Pending</span>
                                     {% elif item.status == 'Accepted' %}
-                                    <span class="badge badge-success">Accepted</span>
+                                        <span class="badge badge-success">Accepted</span>
                                     {% elif item.status == 'Rejected' %}
-                                    <span class="badge badge-danger">Rejected</span>
+                                        <span class="badge badge-danger">Rejected</span>
+                                    {% elif item.status == 'Shipped' %}
+                                        <span class="badge badge-primary">Shipped</span>
+                                    {% elif item.status == 'Delivered' %}
+                                        <span class="badge badge-success">Delivered</span>
                                     {% else %}
-                                    <span class="badge badge-info">{{ item.status }}</span>
+                                        <span class="badge badge-info">{{ item.status }}</span>
                                     {% endif %}
                                 </td>
-                                <td><span class="badge badge-secondary">{{ item.order.status }}</span></td>
+
+                                <!-- Order Status -->
                                 <td>
-                                    <form action="/shop_update_booking_status/" method="POST" class="d-flex gap-2">
+                                    <span class="badge badge-secondary">
+                                        {{ item.order.status }}
+                                    </span>
+                                </td>
+
+                                <!-- Update Status -->
+                                <td>
+                                    <form action="/shop_update_booking_status/" method="POST" class="d-flex align-items-center">
                                         {% csrf_token %}
                                         <input type="hidden" name="cid" value="{{ item.id }}">
-                                        <select name="status" class="form-control form-control-sm" style="width: auto;">
-                                            <option value="pending" {% if item.status=='pending' %}selected{% endif %}>
-                                                Pending</option>
-                                            <option value="Accepted" {% if item.status=='Accepted' %}selected{% endif
-                                                %}>Accept</option>
-                                            <option value="Rejected" {% if item.status=='Rejected' %}selected{% endif
-                                                %}>Reject</option>
-                                            <option value="Shipped" {% if item.status=='Shipped' %}selected{% endif %}>
-                                                Shipped</option>
-                                            <option value="Delivered" {% if item.status=='Delivered' %}selected{% endif
-                                                %}>Delivered</option>
+
+                                        <select name="status" class="form-control form-control-sm mr-2" style="width:auto;">
+
+                                            <option value="pending"
+                                                {% if item.status == 'pending' %}selected{% endif %}>
+                                                Pending
+                                            </option>
+
+                                            <option value="Accepted"
+                                                {% if item.status == 'Accepted' %}selected{% endif %}>
+                                                Accept
+                                            </option>
+
+                                            <option value="Rejected"
+                                                {% if item.status == 'Rejected' %}selected{% endif %}>
+                                                Reject
+                                            </option>
+
+                                            <option value="Shipped"
+                                                {% if item.status == 'Shipped' %}selected{% endif %}>
+                                                Shipped
+                                            </option>
+
+                                            <option value="Delivered"
+                                                {% if item.status == 'Delivered' %}selected{% endif %}>
+                                                Delivered
+                                            </option>
+
                                         </select>
-                                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            Update
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
+
                             {% empty %}
                             <tr>
-                                <td colspan="9" class="text-center py-5">No bookings received yet.</td>
+                                <td colspan="9" class="text-center py-5">
+                                    No bookings received yet.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
