@@ -30,6 +30,23 @@ class User(models.Model):
 
 
 # -----------------------------------------------------------
+# SHOP PROFILE TABLE
+# -----------------------------------------------------------
+class Shop(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    phone = models.IntegerField()
+    address = models.CharField(max_length=300)
+    image = models.ImageField(upload_to="shop_images", null=True)
+    loginid = models.ForeignKey(Login, on_delete=models.CASCADE)
+    # pending → approved → rejected → blocked
+    status = models.CharField(max_length=40, default='pending', null=True)
+
+    def __str__(self):
+        return self.name
+
+
+# -----------------------------------------------------------
 # USER UPLOAD DRAWINGS
 # -----------------------------------------------------------
 class Drawing(models.Model):
@@ -77,6 +94,7 @@ class VideoRequest(models.Model):
 # PRODUCTS ADDED BY ADMIN
 # -----------------------------------------------------------
 class Products(models.Model):
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=100)       # Normal text field
     price = models.IntegerField()
