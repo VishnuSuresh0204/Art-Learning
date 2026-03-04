@@ -844,7 +844,7 @@ def delete_video(request):
             video.delete()
         except Video.DoesNotExist:
             pass
-    return redirect("/view_videos")
+    return redirect("/view_videos/")
 
 
 def admin_edit_video(request):
