@@ -107,9 +107,9 @@
                         <div class="form-group">
                             <label>Status</label>
                             <select name="status" class="form-control">
-                                <option value="active" {% if video.status=='active' %}selected{% endif %}>Active
+                                <option value="active" {% if video.status == 'active' %}selected{% endif %}>Active
                                 </option>
-                                <option value="inactive" {% if video.status=='inactive' %}selected{% endif %}>Inactive
+                                <option value="inactive" {% if video.status == 'inactive' %}selected{% endif %}>Inactive
                                 </option>
                             </select>
                         </div>
