@@ -2,56 +2,242 @@
 {% load static %}
 {% block content %}
 
-<div class="page-section contact-page">
-    <div class="contact-warp">
+<style>
+    :root {
+        --profile-bg: #f8fafc;
+        --accent-color: #2563eb;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --glass: rgba(255, 255, 255, 0.9);
+        --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    .profile-container {
+        padding: 40px 0 80px;
+        background: var(--profile-bg);
+        min-height: 80vh;
+    }
+
+    .profile-header {
+        position: relative;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        height: 200px;
+        border-radius: 30px;
+        margin-bottom: 80px;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .profile-avatar-wrapper {
+        position: absolute;
+        bottom: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 8px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: var(--shadow-sm);
+        z-index: 10;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #f8fafc;
+    }
+
+    .glass-card {
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05);
+    }
+
+    .profile-info-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .profile-info-header h2 {
+        font-weight: 800;
+        font-size: 2rem;
+        color: var(--text-main);
+        margin-bottom: 5px;
+        letter-spacing: -0.5px;
+    }
+
+    .user-badge {
+        display: inline-block;
+        padding: 4px 16px;
+        background: #e0f2fe;
+        color: #0369a1;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .info-item {
+        background: white;
+        padding: 24px;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        transition: transform 0.3s ease;
+    }
+
+    .info-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .info-item label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .info-item p {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 0;
+        word-break: break-all;
+    }
+
+    .info-item i {
+        color: var(--accent-color);
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+    }
+
+    .address-block {
+        grid-column: 1 / -1;
+    }
+
+    .action-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .btn-premium {
+        padding: 14px 30px;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-edit {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+    }
+
+    .btn-edit:hover {
+        background: #1d4ed8;
+        transform: scale(1.02);
+        color: white;
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-logout {
+        background: #fee2e2;
+        color: #ef4444;
+        border: none;
+    }
+
+    .btn-logout:hover {
+        background: #fecaca;
+        transform: scale(1.02);
+        color: #dc2626;
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            height: 150px;
+        }
+
+        .action-group {
+            flex-direction: column;
+        }
+
+        .btn-premium {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <!-- Profile Card -->
-                <div class="card shadow-sm" style="border: none; border-radius: 12px; overflow: hidden;">
-                    <div class="card-header bg-primary text-white text-center py-4">
-                        <h3 class="mb-0 text-white">My Profile</h3>
+            <div class="col-xl-9">
+                <div class="profile-header">
+                    <div class="profile-avatar-wrapper">
+                        {% if user.image %}
+                        <img src="{{ user.image.url }}" alt="{{ user.name }}" class="profile-avatar">
+                        {% else %}
+                        <img src="{% static 'img/default-user.jpg' %}" alt="Default Profile" class="profile-avatar">
+                        {% endif %}
                     </div>
-                    <div class="card-body text-center p-5">
+                </div>
 
-                        <!-- Profile Image -->
-                        <div
-                            style="width: 150px; height: 150px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                            {% if user.image %}
-                            <img src="{{ user.image.url }}" alt="{{ user.name }}"
-                                style="width: 100%; height: 100%; object-fit: cover;">
-                            {% else %}
-                            <img src="{% static 'img/default-user.jpg' %}" alt="Default Profile"
-                                style="width: 100%; height: 100%; object-fit: cover;">
-                            {% endif %}
+                <div class="glass-card">
+                    <div class="profile-info-header">
+                        <h2>{{ user.name }}</h2>
+                        <span class="user-badge">{{ user.loginid.userType }}</span>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <i class="fa fa-user"></i>
+                            <label>Username</label>
+                            <p>{{ user.loginid.username }}</p>
                         </div>
-
-                        <h2 class="mb-3">{{ user.name }}</h2>
-                        <p class="text-muted mb-4">{{ user.loginid.userType|title }}</p>
-
-                        <ul class="list-group list-group-flush text-left mb-4">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <strong>Username</strong>
-                                <span>{{ user.loginid.username }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <strong>Email</strong>
-                                <span>{{ user.email }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <strong>Phone</strong>
-                                <span>{{ user.phone }}</span>
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Address</strong>
-                                <p class="mb-0 text-muted mt-1">{{ user.address }}</p>
-                            </li>
-                        </ul>
-
-                        <div class="d-flex justify-content-center">
-                            <a href="/edit_profile" class="site-btn mr-3">Edit Profile</a>
-                            <a href="/login" class="btn btn-outline-danger">Log Out</a>
+                        <div class="info-item">
+                            <i class="fa fa-envelope"></i>
+                            <label>Email Address</label>
+                            <p>{{ user.email }}</p>
                         </div>
+                        <div class="info-item">
+                            <i class="fa fa-phone"></i>
+                            <label>Phone Number</label>
+                            <p>{{ user.phone }}</p>
+                        </div>
+                        <div class="info-item address-block">
+                            <i class="fa fa-map-marker"></i>
+                            <label>Contact Address</label>
+                            <p>{{ user.address }}</p>
+                        </div>
+                    </div>
 
+                    <div class="action-group">
+                        <a href="/edit_profile" class="btn-premium btn-edit">
+                            <i class="fa fa-edit"></i> Edit Profile
+                        </a>
+                        <a href="/login" class="btn-premium btn-logout">
+                            <i class="fa fa-sign-out"></i> Log Out
+                        </a>
                     </div>
                 </div>
             </div>
