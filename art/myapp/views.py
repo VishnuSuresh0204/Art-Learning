@@ -847,6 +847,25 @@ def delete_video(request):
     return redirect("/view_videos")
 
 
+def admin_edit_video(request):
+    """Admin edit tutorial video"""
+    video_id = request.GET.get("id")
+    video = get_object_or_404(Video, id=video_id)
+
+    if request.method == "POST":
+        video.title = request.POST.get("title")
+        video.description = request.POST.get("description")
+        video.category = request.POST.get("category")
+        video.video_link = request.POST.get("video_link")
+        video.status = request.POST.get("status")
+        video.save()
+
+        messages.success(request, "Video updated successfully!")
+        return redirect("/view_videos/")
+
+    return render(request, "ADMIN/edit_video.html", {"video": video})
+
+
 def admin_view_drawings(request):
     """Admin view all user drawings with feedback"""
     if not request.user.is_authenticated or request.user.userType != "admin":

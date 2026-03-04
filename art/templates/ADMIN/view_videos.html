@@ -153,7 +153,11 @@
                                         class="btn btn-sm btn-outline-primary mr-2" title="Watch on YouTube">
                                         <i class="fa fa-play"></i>
                                     </a>
-                                    <a href="/delete_video?id={{ v.id }}" class="btn btn-sm btn-outline-danger"
+                                    <a href="/edit_video/?id={{ v.id }}" class="btn btn-sm btn-outline-info mr-2"
+                                        title="Edit Video">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a href="/delete_video/?id={{ v.id }}" class="btn btn-sm btn-outline-danger"
                                         onclick="return confirm('Permanently delete this video?')">
                                         <i class="fa fa-trash"></i>
                                     </a>

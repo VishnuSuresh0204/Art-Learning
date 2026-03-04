@@ -62,6 +62,7 @@ urlpatterns = [
 
     # --- ADMIN: VIDEOS ---
     path("add_video/", views.admin_add_video),
+    path("edit_video/", views.admin_edit_video),
     path("delete_video/", views.delete_video),
     path("view_videos/", views.view_videos),
     
