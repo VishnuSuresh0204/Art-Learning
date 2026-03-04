@@ -22,6 +22,7 @@
                             <tr>
                                 <th style="width: 100px;">Image</th>
                                 <th>Name</th>
+                                <th>Shop</th>
                                 <th>Category</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
@@ -39,6 +40,7 @@
                                     </div>
                                 </td>
                                 <td><strong>{{ p.name }}</strong></td>
+                                <td>{% if p.shop %}{{ p.shop.name }}{% else %}Admin{% endif %}</td>
                                 <td>{{ p.category }}</td>
                                 <td>₹{{ p.price }}</td>
                                 <td>{{ p.qty }}</td>
