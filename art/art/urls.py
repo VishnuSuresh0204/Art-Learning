@@ -1,0 +1,80 @@
+from django.contrib import admin
+from django.urls import path
+from myapp import views
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    # --- ADMIN/DJANGO ---
+    path('admin/', admin.site.urls),
+
+    # --- AUTHENTICATION ---
+    path('', views.home),
+    path('register/', views.register),
+    path('login/', views.login_view),
+    path('about/', views.about),
+
+    # --- USER PROFILE & NAVIGATION ---
+    path('user_home/', views.user_home),
+    path('profile', views.profile),
+    path('edit_profile', views.edit_profile),
+
+    # --- USER DRAWINGS ---
+    path('upload_drawing/', views.upload_drawing),
+    path('view_drawings/', views.my_drawings),        # List own drawings
+    path('all_drawings/', views.all_drawings),        # Gallery
+    path('delete_drawing/', views.delete_drawing),
+    path('drawing_detail', views.drawing_detail),
+    path('edit_feedback', views.edit_feedback),
+
+    # --- USER SHOP & VIDEOS ---
+    path("user_view_videos/", views.user_view_videos),
+    path("user_view_products/", views.user_view_products),
+    
+    # --- USER CART ---
+    path('add_to_cart', views.add_to_cart),
+    path('view_cart', views.view_cart),
+    path('remove_cart/', views.remove_cart),
+    path('update_cart_quantity/', views.update_cart_quantity),
+    path('checkout/', views.checkout),
+    path('process_payment/', views.process_payment),
+
+    # --- ADMIN: HOME & USERS ---
+    path('admin_home/', views.admin_home),
+    path("view_users/", views.view_users),
+    path("user_details/", views.admin_user_details),
+    path("block_user/", views.block_user),
+    path("unblock_user/", views.unblock_user),
+    path("delete_user/", views.delete_user),
+
+    # --- ADMIN: VIDEOS ---
+    path("add_video/", views.admin_add_video),
+    path("delete_video/", views.delete_video),
+    path("view_videos/", views.view_videos),
+    
+    # --- ADMIN: PRODUCTS ---
+    path("add_product/", views.add_product),
+    path("view_products/", views.view_products),
+    path("edit_product/", views.edit_product),
+    path("delete_product/", views.delete_product),
+    path("admin_view_drawings/", views.admin_view_drawings),
+    
+    # --- ADMIN: FEEDBACK ---
+    path("view_feedback/", views.admin_view_feedback),
+    path("delete_product_feedback/", views.delete_product_feedback),
+    path("delete_drawing_feedback/", views.delete_drawing_feedback),
+
+    # --- ORDERS ---
+    path("admin_view_orders/", views.admin_view_orders),
+    path("update_order_status/", views.update_order_status),
+    path("my_orders/", views.my_orders),
+    path("user_order_details/", views.user_order_details),
+    path("add_product_feedback/", views.add_product_feedback),
+    path("edit_product_feedback/", views.edit_product_feedback),
+    path("delete_product_feedback_user/", views.delete_product_feedback_user),
+    path("delete_drawing_feedback_user/", views.delete_drawing_feedback_user),
+
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
