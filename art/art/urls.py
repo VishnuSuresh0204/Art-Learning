@@ -33,6 +33,7 @@ urlpatterns = [
     path('all_drawings/', views.all_drawings),        # Gallery
     path('delete_drawing/', views.delete_drawing),
     path('drawing_detail', views.drawing_detail),
+    path('edit_drawing/', views.edit_drawing, name='edit_drawing'),
     path('edit_feedback', views.edit_feedback),
 
     # --- USER SHOP & VIDEOS ---
@@ -81,6 +82,11 @@ urlpatterns = [
     path("edit_product_feedback/", views.edit_product_feedback),
     path("delete_product_feedback_user/", views.delete_product_feedback_user),
     path("delete_drawing_feedback_user/", views.delete_drawing_feedback_user),
+
+    # --- CHAT ---
+    path('chat/<int:receiver_id>/', views.chat_view, name='chat_view'),
+    path('send_message/', views.send_message, name='send_message'),
+    path('my_chats/', views.my_chats, name='my_chats'),
 
 ]
 

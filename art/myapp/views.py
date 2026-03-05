@@ -806,6 +806,116 @@ def unblock_shop(request):
     return redirect("/view_shops")
 
 
+# ==============================================================================
+#                               CHAT SYSTEM VIEWS
+# ==============================================================================
+
+def chat_view(request, receiver_id):
+    """View conversation between current user and another user."""
+    if not request.user.is_authenticated:
+        return redirect("/login")
+
+    receiver_login = get_object_or_404(Login, id=receiver_id)
+    
+    # Identify sender and receiver profiles for display names if needed
+    # (Using Login model for simplicity in chat storage, but might want User info)
+    
+    messages_list = Chat.objects.filter(
+        (models.Q(sender=request.user) & models.Q(receiver=receiver_login)) |
+        (models.Q(sender=receiver_login) & models.Q(receiver=request.user))
+    ).order_by('date')
+
+    # Mark received messages as read
+    Chat.objects.filter(sender=receiver_login, receiver=request.user, status='unread').update(status='read')
+
+    return render(request, "USER/chat.html", {
+        "messages_list": messages_list,
+        "receiver_login": receiver_login,
+        "current_user": request.user
+    })
+
+
+def send_message(request):
+    """AJAX or Form POST to send a chat message."""
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect("/login")
+
+        receiver_id = request.POST.get("receiver_id")
+        content = request.POST.get("message")
+        
+        receiver_login = get_object_or_404(Login, id=receiver_id)
+        
+        if content:
+            Chat.objects.create(
+                sender=request.user,
+                receiver=receiver_login,
+                message=content
+            )
+            
+        return redirect(f"/chat/{receiver_id}/")
+    
+    return redirect("/user_home")
+
+
+def my_chats(request):
+    """List all active conversations for the current user."""
+    if not request.user.is_authenticated:
+        return redirect("/login")
+
+    # Find unique logins the user has chatted with
+    sent_to = Chat.objects.filter(sender=request.user).values_list('receiver', flat=True)
+    received_from = Chat.objects.filter(receiver=request.user).values_list('sender', flat=True)
+    
+    interacted_ids = set(list(sent_to) + list(received_from))
+    interacted_logins = Login.objects.filter(id__in=interacted_ids).exclude(id=request.user.id)
+
+    # Attach the last message and unread count for each contact
+    contacts = []
+    for contact in interacted_logins:
+        last_msg = Chat.objects.filter(
+            (models.Q(sender=request.user) & models.Q(receiver=contact)) |
+            (models.Q(sender=contact) & models.Q(receiver=request.user))
+        ).order_by('-date').first()
+        
+        unread_count = Chat.objects.filter(sender=contact, receiver=request.user, status='unread').count()
+        
+        contacts.append({
+            "login": contact,
+            "last_message": last_msg,
+            "unread_count": unread_count
+        })
+
+    return render(request, "USER/my_chats.html", {"contacts": contacts})
+
+
+def edit_drawing(request):
+    """Edit a drawing uploaded by the current user."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+    
+    drawing_id = request.GET.get("id")
+    drawing = get_object_or_404(Drawing, id=drawing_id)
+
+    # Security check: Ensure owner is editing
+    if drawing.user.loginid.id != request.session['uid']:
+        messages.error(request, "You cannot edit this drawing.")
+        return redirect("/view_drawings")
+
+    if request.method == "POST":
+        drawing.title = request.POST.get("title")
+        drawing.description = request.POST.get("description")
+        
+        if request.FILES.get("image"):
+            drawing.image = request.FILES.get("image")
+            
+        drawing.save()
+        messages.success(request, "Drawing updated successfully!")
+        return redirect(f"/drawing_detail?id={drawing.id}")
+
+    return render(request, "USER/edit_drawing.html", {"drawing": drawing})
+
+
 def admin_add_video(request):
     """Admin add tutorial video"""
     if request.method == "POST":

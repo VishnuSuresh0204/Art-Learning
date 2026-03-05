@@ -1,0 +1,221 @@
+{% extends "USER/commen.html" %}
+{% block content %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    .chats-page {
+        padding: 50px 15px;
+        min-height: 80vh;
+        background: #f4f6fb;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .chats-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 30px;
+    }
+
+    .chats-header h2 {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .chats-header span.badge-count {
+        background: #6c63ff;
+        color: #fff;
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Contact Card */
+    .contact-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.15s, box-shadow 0.2s;
+        border-left: 4px solid transparent;
+    }
+
+    .contact-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(108, 99, 255, 0.12);
+        border-left-color: #6c63ff;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .contact-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c63ff, #48cae4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .contact-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .contact-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 3px;
+    }
+
+    .contact-preview {
+        font-size: 13px;
+        color: #888;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .contact-preview .you-label {
+        color: #6c63ff;
+        font-weight: 500;
+    }
+
+    .contact-meta {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .contact-time {
+        font-size: 11px;
+        color: #aaa;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .unread-badge {
+        background: #6c63ff;
+        color: #fff;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        margin-left: auto;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .empty-state i {
+        font-size: 56px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h4 {
+        color: #555;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: #aaa;
+        margin-bottom: 24px;
+    }
+
+    .btn-browse {
+        background: linear-gradient(135deg, #6c63ff, #48cae4);
+        color: #fff;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        display: inline-block;
+        transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-browse:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        color: #fff;
+        text-decoration: none;
+    }
+</style>
+
+<div class="chats-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+
+                <div class="chats-header">
+                    <h2>Messages</h2>
+                    {% if contacts %}
+                    <span class="badge-count">{{ contacts|length }}</span>
+                    {% endif %}
+                </div>
+
+                {% for contact in contacts %}
+                <a href="/chat/{{ contact.login.id }}/" class="contact-card">
+                    <div class="contact-avatar">{{ contact.login.username|first }}</div>
+
+                    <div class="contact-info">
+                        <div class="contact-name">{{ contact.login.username }}</div>
+                        <div class="contact-preview">
+                            {% if contact.last_message.sender == request.user %}
+                            <span class="you-label">You: </span>
+                            {% endif %}
+                            {{ contact.last_message.message|truncatechars:55 }}
+                        </div>
+                    </div>
+
+                    <div class="contact-meta">
+                        <span class="contact-time">{{ contact.last_message.date|timesince }} ago</span>
+                        {% if contact.unread_count > 0 %}
+                        <span class="unread-badge">{{ contact.unread_count }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% empty %}
+                <div class="empty-state">
+                    <div><i class="fa fa-comments"></i></div>
+                    <h4>No conversations yet</h4>
+                    <p>Browse the gallery and chat with an artist to get started.</p>
+                    <a href="/all_drawings" class="btn-browse">Browse Gallery</a>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

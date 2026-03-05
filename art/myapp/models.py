@@ -169,3 +169,17 @@ class ProductFeedback(models.Model):
 
     def __str__(self):
         return f"{self.user.name} - {self.product.name}"
+
+
+# -----------------------------------------------------------
+# CHAT TABLE
+# -----------------------------------------------------------
+class Chat(models.Model):
+    sender = models.ForeignKey(Login, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(Login, on_delete=models.CASCADE, related_name='received_messages')
+    message = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='unread')  # unread/read
+
+    def __str__(self):
+        return f"{self.sender.username} -> {self.receiver.username}"
