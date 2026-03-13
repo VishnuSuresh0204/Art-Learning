@@ -27,6 +27,27 @@ def register(request):
         password = request.POST['password']
         image = request.FILES.get('image')
 
+        # Server-side validation
+        if not phone or not phone.isdigit():
+            messages.error(request, "Invalid phone number. Please enter a valid numeric phone number.")
+            return render(request, "register.html", {
+                "values": request.POST
+            })
+
+        # Check if username already exists
+        if Login.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken. Please choose another one.")
+            return render(request, "register.html", {
+                "values": request.POST
+            })
+
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered. Use a different email or login.")
+            return render(request, "register.html", {
+                "values": request.POST
+            })
+
         login_obj = Login.objects.create_user(
             username=username,
             password=password,
@@ -59,6 +80,27 @@ def shop_register(request):
         address = request.POST['address']
         password = request.POST['password']
         image = request.FILES.get('image')
+
+        # Server-side validation
+        if not phone or not phone.isdigit():
+            messages.error(request, "Invalid phone number. Please enter a valid numeric phone number.")
+            return render(request, "register_shop.html", {
+                "values": request.POST
+            })
+
+        # Check if username already exists
+        if Login.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken. Please choose another one.")
+            return render(request, "register_shop.html", {
+                "values": request.POST
+            })
+
+        # Check if email already exists
+        if Shop.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered. Use a different email or login.")
+            return render(request, "register_shop.html", {
+                "values": request.POST
+            })
 
         # Create login object for shop - initially inactive
         login_obj = Login.objects.create_user(

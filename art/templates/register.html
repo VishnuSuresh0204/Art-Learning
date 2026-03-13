@@ -1,42 +1,102 @@
 {% extends "commen.html" %}
-
 {% load static %}
 {% block content %}
 
-<!-- Page section -->
 <div class="page-section contact-page">
     <div class="contact-warp">
-        <div class="row">
-            <div class="col-xl-6 p-0">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8 col-md-10 p-0">
                 <div class="contact-text">
                     <span>Join Us</span>
                     <h2>User Registration</h2>
+                    
+                    {% if messages %}
+                    {% for msg in messages %}
+                    <p style="color:red; font-weight:bold;">{{ msg }}</p>
+                    {% endfor %}
+                    {% endif %}
 
                     <form class="contact-form" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <input type="text" name="username" placeholder="Username" required>
-                        <input type="email" name="email" placeholder="Email" required>
+                        <!-- Username -->
+                        <input 
+                            type="text" 
+                            name="username" 
+                            placeholder="Username"
+                            required
+                            minlength="4"
+                            maxlength="20"
+                            pattern="^[A-Za-z0-9_]+$"
+                            title="Username should contain only letters, numbers, or underscores (4-20 characters)"
+                            value="{{ values.username }}"
+                        >
 
-                        <input type="text" name="phone" placeholder="Phone Number" required>
+                        <!-- Email -->
+                        <input 
+                            type="email" 
+                            name="email" 
+                            placeholder="Email Address"
+                            required
+                            title="Enter a valid email address"
+                            value="{{ values.email }}"
+                        >
 
-                        <input type="text" name="address" placeholder="Address" required>
+                        <!-- Phone -->
+                        <input 
+                            type="tel" 
+                            name="phone" 
+                            placeholder="Phone Number"
+                            required
+                            pattern="[0-9]{10}"
+                            maxlength="10"
+                            title="Enter a valid 10 digit phone number"
+                            value="{{ values.phone }}"
+                        >
 
+                        <!-- Address -->
+                        <input 
+                            type="text" 
+                            name="address" 
+                            placeholder="Address"
+                            required
+                            minlength="5"
+                            maxlength="200"
+                            title="Address must be at least 5 characters"
+                            value="{{ values.address }}"
+                        >
+
+                        <!-- Profile Image -->
                         <label style="color:#777; margin-top:10px;">Profile Image</label>
-                        <input type="file" name="image" style="padding:10px; border:1px solid #ddd;" required>
+                        <input 
+                            type="file" 
+                            name="image"
+                            accept="image/png, image/jpeg, image/jpg"
+                            required
+                            style="padding:10px; border:1px solid #ddd;"
+                            title="Upload JPG or PNG image"
+                        >
 
+                        <!-- Password -->
+                        <input 
+                            type="password" 
+                            name="password" 
+                            placeholder="Password"
+                            required
+                            minlength="6"
+                            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$"
+                            title="Password must contain at least 6 characters including one letter and one number"
+                        >
 
+                        <button class="site-btn" style="margin-top:15px;">
+                            Register Now
+                        </button>
 
-                        <input type="password" name="password" placeholder="Password" required>
-
-                        <button class="site-btn" style="margin-top:15px;">Register Now</button>
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Page section end-->
 
 {% endblock %}
