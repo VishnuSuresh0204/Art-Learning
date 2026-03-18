@@ -1,0 +1,74 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row mb-5 align-items-center">
+            <div class="col-md-12">
+                <div class="contact-text">
+                    <span>Buyer Dashboard</span>
+                    <h2>My Art Bookings</h2>
+                </div>
+            </div>
+        </div>
+
+        {% if bookings %}
+        <div class="table-responsive">
+            <table class="table table-hover shadow-sm" style="border-radius: 12px; overflow: hidden; background: white;">
+                <thead style="background: #4b49ac; color: white;">
+                    <tr>
+                        <th>Artwork</th>
+                        <th>Artist</th>
+                        <th>Date</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ booking.drawing.image.url }}" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                                <span>{{ booking.drawing.title }}</span>
+                            </div>
+                        </td>
+                        <td>{{ booking.drawing.user.name }}</td>
+                        <td>{{ booking.date }}</td>
+                        <td>₹{{ booking.drawing.price }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if booking.status == 'pending' %}badge-warning
+                                {% elif booking.status == 'accepted' %}badge-success
+                                {% elif booking.status == 'Paid' %}badge-primary
+                                {% else %}badge-danger{% endif %}">
+                                {{ booking.status|capfirst }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if booking.status == 'accepted' %}
+                            <a href="/pay_for_drawing?id={{ booking.id }}" class="btn btn-sm btn-primary">Proceed to Payment</a>
+                            {% elif booking.status == 'Paid' %}
+                            <a href="/view_drawing_payment_details?id={{ booking.id }}" class="btn btn-sm btn-info">View Receipt</a>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            <h4>No bookings yet.</h4>
+            <p>Explore the gallery and find your next favorite piece!</p>
+            <a href="/all_drawings/" class="site-btn mt-3">Go to Gallery</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

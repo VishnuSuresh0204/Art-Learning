@@ -27,27 +27,6 @@ def register(request):
         password = request.POST['password']
         image = request.FILES.get('image')
 
-        # Server-side validation
-        if not phone or not phone.isdigit():
-            messages.error(request, "Invalid phone number. Please enter a valid numeric phone number.")
-            return render(request, "register.html", {
-                "values": request.POST
-            })
-
-        # Check if username already exists
-        if Login.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken. Please choose another one.")
-            return render(request, "register.html", {
-                "values": request.POST
-            })
-
-        # Check if email already exists
-        if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already registered. Use a different email or login.")
-            return render(request, "register.html", {
-                "values": request.POST
-            })
-
         login_obj = Login.objects.create_user(
             username=username,
             password=password,
@@ -66,71 +45,13 @@ def register(request):
         user_obj.save()
 
         messages.success(request, "Registration Successful!")
-        return redirect("/login/")
+        return redirect("/login")
 
     return render(request, "register.html")
 
 
-def shop_register(request):
-    """Shop registration view."""
-    if request.method == "POST":
-        username = request.POST['username']
-        email = request.POST['email']
-        phone = request.POST['phone']
-        address = request.POST['address']
-        password = request.POST['password']
-        image = request.FILES.get('image')
-
-        # Server-side validation
-        if not phone or not phone.isdigit():
-            messages.error(request, "Invalid phone number. Please enter a valid numeric phone number.")
-            return render(request, "register_shop.html", {
-                "values": request.POST
-            })
-
-        # Check if username already exists
-        if Login.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken. Please choose another one.")
-            return render(request, "register_shop.html", {
-                "values": request.POST
-            })
-
-        # Check if email already exists
-        if Shop.objects.filter(email=email).exists():
-            messages.error(request, "Email already registered. Use a different email or login.")
-            return render(request, "register_shop.html", {
-                "values": request.POST
-            })
-
-        # Create login object for shop - initially inactive
-        login_obj = Login.objects.create_user(
-            username=username,
-            password=password,
-            userType="shop",
-            viewPass=password
-        )
-        login_obj.is_active = False # Admin must approve
-        login_obj.save()
-
-        shop_obj = Shop(
-            name=username,
-            email=email,
-            phone=phone,
-            address=address,
-            image=image,
-            loginid=login_obj,
-            status="pending"
-        )
-        shop_obj.save()
-
-        messages.success(request, "Registration Successful! Waiting for admin approval.")
-        return redirect("/login/")
-
-    return render(request, "register_shop.html")
-
-
 def login_view(request):
-    """Login view handling User, Shop, and Admin logins."""
+    """Login view handling both User and Admin logins."""
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -138,26 +59,17 @@ def login_view(request):
         user = authenticate(username=username, password=password)
 
         if user:
-            if not user.is_active:
-                messages.error(request, "Your account is not active. Please wait for admin approval.")
-                return redirect("/login")
-                
             # Check user type
             if user.userType == "admin":
                 login(request, user)
-                return redirect("/admin_home/")
-            elif user.userType == "shop":
-                login(request, user)
-                request.session['sid'] = user.id
-                return redirect("/shop_home/")
+                return redirect("/admin_home")
             else:
                 # Custom session for regular users
-                login(request, user)
                 request.session['uid'] = user.id
-                return redirect("/user_home/")
+                return redirect("/user_home")
 
-        messages.error(request, "Invalid login credentials or account inactive")
-        return redirect("/login/")
+        messages.error(request, "Invalid login credentials")
+        return redirect("/login")
 
     return render(request, "login.html")
 
@@ -171,149 +83,10 @@ def user_home(request):
     if 'uid' not in request.session:
         return redirect("/login")
 
-    user_login = Login.objects.get(id=request.session['uid'])
-    profile = User.objects.get(loginid=user_login)
+    user = Login.objects.get(id=request.session['uid'])
+    profile = User.objects.get(loginid=user)
 
     return render(request, "USER/index.html", {"user": profile})
-
-
-def shop_home(request):
-    """Shop Dashboard/Home"""
-    if 'sid' not in request.session:
-        return redirect("/login")
-
-    user_login = Login.objects.get(id=request.session['sid'])
-    shop = Shop.objects.get(loginid=user_login)
-
-    return render(request, "SHOP/index.html", {"shop": shop})
-
-
-def shop_add_product(request):
-    """Shop add its own product"""
-    if 'sid' not in request.session:
-        return redirect("/login")
-
-    user_login = Login.objects.get(id=request.session['sid'])
-    shop = Shop.objects.get(loginid=user_login)
-
-    if request.method == "POST":
-        name = request.POST.get("name")
-        category = request.POST.get("category")
-        price = request.POST.get("price")
-        qty = request.POST.get("qty")
-        desc = request.POST.get("desc")
-        image = request.FILES.get("image")
-
-        Products.objects.create(
-            shop=shop,
-            name=name,
-            category=category,
-            price=price,
-            qty=qty,
-            desc=desc,
-            image=image
-        )
-        messages.success(request, "Product added successfully!")
-        return redirect("/shop_view_products")
-
-    return render(request, "SHOP/add_product.html")
-
-
-def shop_view_products(request):
-    """Shop view its own products"""
-    if 'sid' not in request.session:
-        return redirect("/login")
-
-    user_login = Login.objects.get(id=request.session['sid'])
-    shop = Shop.objects.get(loginid=user_login)
-    products = Products.objects.filter(shop=shop)
-    
-    return render(request, "SHOP/view_products.html", {"products": products})
-
-
-def shop_edit_product(request):
-    """Shop edit its own product"""
-    if 'sid' not in request.session:
-        return redirect("/login")
-
-    pid = request.GET.get("id")
-    product = get_object_or_404(Products, id=pid)
-    
-    # Security check
-    user_login = Login.objects.get(id=request.session['sid'])
-    shop = Shop.objects.get(loginid=user_login)
-    if product.shop != shop:
-        return redirect("/shop_view_products")
-
-    if request.method == "POST":
-        product.name = request.POST.get("name")
-        product.category = request.POST.get("category")
-        product.price = request.POST.get("price")
-        product.qty = request.POST.get("qty")
-        product.desc = request.POST.get("desc")
-        product.status = request.POST.get("status")
-
-        if request.FILES.get("image"):
-            product.image = request.FILES.get("image")
-
-        product.save()
-        messages.success(request, "Product updated!")
-        return redirect("/shop_view_products")
-
-    return render(request, "SHOP/edit_product.html", {"product": product})
-
-
-def shop_delete_product(request):
-    """Shop delete its own product"""
-    if 'sid' not in request.session:
-        return redirect("/login")
-
-    pid = request.GET.get("id")
-    product = get_object_or_404(Products, id=pid)
-    
-    # Security check
-    user_login = Login.objects.get(id=request.session['sid'])
-    shop = Shop.objects.get(loginid=user_login)
-    if product.shop == shop:
-        product.delete()
-        messages.success(request, "Product deleted.")
-        
-    return redirect("/shop_view_products")
-
-
-def shop_view_bookings(request):
-    """Shop view bookings for its products"""
-    if 'sid' not in request.session:
-        return redirect("/login")
-
-    user_login = Login.objects.get(id=request.session['sid'])
-    shop = Shop.objects.get(loginid=user_login)
-    
-    # Cart items for this shop's products where the order is paid or beyond
-    cart_items = Cart.objects.filter(product__shop=shop).exclude(order__status="Pending").order_by('-date')
-    
-    return render(request, "SHOP/view_bookings.html", {"cart_items": cart_items})
-
-
-def shop_update_booking_status(request):
-    """Shop updates status of a specific booking item"""
-    if 'sid' not in request.session:
-        return redirect("/login")
-
-    if request.method == "POST":
-        cart_id = request.POST.get("cid")
-        new_status = request.POST.get("status")
-        cart_item = get_object_or_404(Cart, id=cart_id)
-        
-        # Security check
-        user_login = Login.objects.get(id=request.session['sid'])
-        shop = Shop.objects.get(loginid=user_login)
-        if cart_item.product.shop == shop:
-            cart_item.status = new_status
-            cart_item.save()
-            messages.success(request, f"Booking status updated to {new_status}")
-            
-    return redirect("/shop_view_bookings")
 
 
 def profile(request):
@@ -362,12 +135,14 @@ def upload_drawing(request):
     if request.method == "POST":
         title = request.POST['title']
         desc = request.POST['description']
+        price = request.POST['price']
         img = request.FILES.get('image')
 
         Drawing.objects.create(
             user=user,
             title=title,
             description=desc,
+            price=price,
             image=img
         )
 
@@ -487,6 +262,34 @@ def delete_drawing(request):
              drawing.delete()
              
     return redirect(request.META.get('HTTP_REFERER', '/view_users'))
+
+
+def edit_drawing(request):
+    """User edit their own drawing details."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    drawing_id = request.GET.get("id")
+    drawing = get_object_or_404(Drawing, id=drawing_id)
+
+    # Verify ownership
+    if drawing.user.loginid.id != request.session['uid']:
+        messages.error(request, "You cannot edit this drawing.")
+        return redirect("/view_drawings")
+
+    if request.method == "POST":
+        drawing.title = request.POST.get("title")
+        drawing.description = request.POST.get("description")
+        drawing.price = request.POST.get("price")
+
+        if request.FILES.get("image"):
+            drawing.image = request.FILES.get("image")
+
+        drawing.save()
+        messages.success(request, "Drawing updated successfully!")
+        return redirect("/view_drawings")
+
+    return render(request, "USER/edit_drawing.html", {"drawing": drawing})
 
 
 def user_view_videos(request):
@@ -786,176 +589,7 @@ def delete_user(request):
         user = User.objects.get(id=user_id)
         user.loginid.delete()  # deletes login first
         user.delete()           # deletes user profile
-    return redirect("/view_users/")
-
-
-def view_shops(request):
-    """Admin view all shops"""
-    if not request.user.is_authenticated or request.user.userType != "admin":
-        return redirect("/login")
-
-    shops = Shop.objects.all()
-    return render(request, "ADMIN/view_shops.html", {"shops": shops})
-
-
-def approve_shop(request):
-    """Approve a shop registration"""
-    shop_id = request.GET.get("id")
-    if shop_id:
-        shop = Shop.objects.get(id=shop_id)
-        shop.status = "approved"
-        shop.save()
-        shop.loginid.is_active = True
-        shop.loginid.save()
-        messages.success(request, f"Shop {shop.name} approved successfully!")
-    return redirect("/view_shops/")
-
-
-def reject_shop(request):
-    """Reject a shop registration"""
-    shop_id = request.GET.get("id")
-    if shop_id:
-        shop = Shop.objects.get(id=shop_id)
-        shop.status = "rejected"
-        shop.save()
-        shop.loginid.is_active = False
-        shop.loginid.save()
-        messages.warning(request, f"Shop {shop.name} rejected.")
-    return redirect("/view_shops/")
-
-
-def block_shop(request):
-    """Block a shop"""
-    shop_id = request.GET.get("id")
-    if shop_id:
-        shop = Shop.objects.get(id=shop_id)
-        shop.status = "blocked"
-        shop.save()
-        shop.loginid.is_active = False
-        shop.loginid.save()
-    return redirect("/view_shops")
-
-
-def unblock_shop(request):
-    """Unblock a shop"""
-    shop_id = request.GET.get("id")
-    if shop_id:
-        shop = Shop.objects.get(id=shop_id)
-        shop.status = "approved"
-        shop.save()
-        shop.loginid.is_active = True
-        shop.loginid.save()
-    return redirect("/view_shops")
-
-
-# ==============================================================================
-#                               CHAT SYSTEM VIEWS
-# ==============================================================================
-
-def chat_view(request, receiver_id):
-    """View conversation between current user and another user."""
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
-    receiver_login = get_object_or_404(Login, id=receiver_id)
-    
-    # Identify sender and receiver profiles for display names if needed
-    # (Using Login model for simplicity in chat storage, but might want User info)
-    
-    messages_list = Chat.objects.filter(
-        (models.Q(sender=request.user) & models.Q(receiver=receiver_login)) |
-        (models.Q(sender=receiver_login) & models.Q(receiver=request.user))
-    ).order_by('date')
-
-    # Mark received messages as read
-    Chat.objects.filter(sender=receiver_login, receiver=request.user, status='unread').update(status='read')
-
-    return render(request, "USER/chat.html", {
-        "messages_list": messages_list,
-        "receiver_login": receiver_login,
-        "current_user": request.user
-    })
-
-
-def send_message(request):
-    """AJAX or Form POST to send a chat message."""
-    if request.method == "POST":
-        if not request.user.is_authenticated:
-            return redirect("/login")
-
-        receiver_id = request.POST.get("receiver_id")
-        content = request.POST.get("message")
-        
-        receiver_login = get_object_or_404(Login, id=receiver_id)
-        
-        if content:
-            Chat.objects.create(
-                sender=request.user,
-                receiver=receiver_login,
-                message=content
-            )
-            
-        return redirect(f"/chat/{receiver_id}/")
-    
-    return redirect("/user_home")
-
-
-def my_chats(request):
-    """List all active conversations for the current user."""
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
-    # Find unique logins the user has chatted with
-    sent_to = Chat.objects.filter(sender=request.user).values_list('receiver', flat=True)
-    received_from = Chat.objects.filter(receiver=request.user).values_list('sender', flat=True)
-    
-    interacted_ids = set(list(sent_to) + list(received_from))
-    interacted_logins = Login.objects.filter(id__in=interacted_ids).exclude(id=request.user.id)
-
-    # Attach the last message and unread count for each contact
-    contacts = []
-    for contact in interacted_logins:
-        last_msg = Chat.objects.filter(
-            (models.Q(sender=request.user) & models.Q(receiver=contact)) |
-            (models.Q(sender=contact) & models.Q(receiver=request.user))
-        ).order_by('-date').first()
-        
-        unread_count = Chat.objects.filter(sender=contact, receiver=request.user, status='unread').count()
-        
-        contacts.append({
-            "login": contact,
-            "last_message": last_msg,
-            "unread_count": unread_count
-        })
-
-    return render(request, "USER/my_chats.html", {"contacts": contacts})
-
-
-def edit_drawing(request):
-    """Edit a drawing uploaded by the current user."""
-    if 'uid' not in request.session:
-        return redirect("/login")
-    
-    drawing_id = request.GET.get("id")
-    drawing = get_object_or_404(Drawing, id=drawing_id)
-
-    # Security check: Ensure owner is editing
-    if drawing.user.loginid.id != request.session['uid']:
-        messages.error(request, "You cannot edit this drawing.")
-        return redirect("/view_drawings")
-
-    if request.method == "POST":
-        drawing.title = request.POST.get("title")
-        drawing.description = request.POST.get("description")
-        
-        if request.FILES.get("image"):
-            drawing.image = request.FILES.get("image")
-            
-        drawing.save()
-        messages.success(request, "Drawing updated successfully!")
-        return redirect(f"/drawing_detail?id={drawing.id}")
-
-    return render(request, "USER/edit_drawing.html", {"drawing": drawing})
+    return redirect("/view_users")
 
 
 def admin_add_video(request):
@@ -976,7 +610,7 @@ def admin_add_video(request):
         )
 
         messages.success(request, "Video added successfully!")
-        return redirect("/view_videos/")
+        return redirect("/view_videos")
 
     return render(request, "ADMIN/add_video.html")
 
@@ -996,27 +630,33 @@ def delete_video(request):
             video.delete()
         except Video.DoesNotExist:
             pass
-    return redirect("/view_videos/")
+    return redirect("/view_videos")
 
 
-def admin_edit_video(request):
-    """Admin edit tutorial video"""
-    video_id = request.GET.get("id")
-    video = get_object_or_404(Video, id=video_id)
-
+def add_product(request):
+    """Admin add new product"""
     if request.method == "POST":
-        video.title = request.POST.get("title")
-        video.description = request.POST.get("description")
-        video.category = request.POST.get("category")
-        video.video_link = request.POST.get("video_link")
-        video.status = request.POST.get("status")
-        video.save()
+        name = request.POST.get("name")
+        category = request.POST.get("category")
+        price = request.POST.get("price")
+        qty = request.POST.get("qty")
+        desc = request.POST.get("desc")
+        image = request.FILES.get("image")
 
-        messages.success(request, "Video updated successfully!")
-        return redirect("/view_videos/")
+        Products.objects.create(
+            name=name,
+            category=category,
+            price=price,
+            qty=qty,
+            desc=desc,
+            image=image
+        )
 
-    return render(request, "ADMIN/edit_video.html", {"video": video})
+        return render(request, "ADMIN/add_product.html", {
+            "msg": "Product added successfully!"
+        })
 
+    return render(request, "ADMIN/add_product.html")
 
 def admin_view_drawings(request):
     """Admin view all user drawings with feedback"""
@@ -1030,6 +670,42 @@ def admin_view_drawings(request):
         d.feedbacks = DrawingFeedback.objects.filter(drawing=d).order_by('-date')
         
     return render(request, "ADMIN/view_drawings.html", {"drawings": drawings})
+
+
+def view_products(request):
+    """Admin view all products"""
+    products = Products.objects.all()
+    return render(request, "ADMIN/view_products.html", {"products": products})
+
+
+def edit_product(request):
+    """Admin edit product"""
+    pid = request.GET.get("id")
+    product = Products.objects.get(id=pid)
+
+    if request.method == "POST":
+        product.name = request.POST.get("name")
+        product.category = request.POST.get("category")
+        product.price = request.POST.get("price")
+        product.qty = request.POST.get("qty")
+        product.desc = request.POST.get("desc")
+        product.status = request.POST.get("status")
+
+        if request.FILES.get("image"):
+            product.image = request.FILES.get("image")
+
+        product.save()
+        return redirect("/view_products/")
+
+    return render(request, "ADMIN/edit_product.html", {"product": product})
+
+
+def delete_product(request):
+    """Admin delete product"""
+    pid = request.GET.get("id")
+    product = Products.objects.get(id=pid)
+    product.delete()
+    return redirect("/view_products/")
 
 
 def admin_view_feedback(request):
@@ -1054,7 +730,7 @@ def delete_product_feedback(request):
     fid = request.GET.get("id")
     if fid:
         ProductFeedback.objects.filter(id=fid).delete()
-    return redirect("/view_feedback/")
+    return redirect("/view_feedback")
 
 def delete_drawing_feedback(request):
     """Admin delete drawing feedback"""
@@ -1065,6 +741,30 @@ def delete_drawing_feedback(request):
     if fid:
         DrawingFeedback.objects.filter(id=fid).delete()
     return redirect(request.META.get('HTTP_REFERER', '/view_feedback'))
+
+def admin_view_orders(request):
+    """Admin view all orders (Paid and beyond)"""
+    if not request.user.is_authenticated or request.user.userType != "admin":
+        return redirect("/login")
+
+    orders = Order.objects.exclude(status="Pending").order_by('-date')
+    return render(request, "ADMIN/view_orders.html", {"orders": orders})
+
+
+def update_order_status(request):
+    """Admin update order status"""
+    if not request.user.is_authenticated or request.user.userType != "admin":
+        return redirect("/login")
+
+    if request.method == "POST":
+        oid = request.POST.get("oid")
+        new_status = request.POST.get("status")
+        order = get_object_or_404(Order, id=oid)
+        order.status = new_status
+        order.save()
+        messages.success(request, f"Order #{oid} status updated to {new_status}")
+    
+    return redirect("/admin_view_orders")
 
 
 def my_orders(request):
@@ -1181,3 +881,174 @@ def delete_product_feedback_user(request):
     feedback.delete()
     messages.success(request, "Feedback deleted!")
     return redirect("/my_orders")
+
+
+# ==============================================================================
+#                               DRAWING BOOKING VIEWS
+# ==============================================================================
+
+def book_drawing(request):
+    """User request to book/buy a drawing from another user."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    drawing_id = request.GET.get("id")
+    drawing = get_object_or_404(Drawing, id=drawing_id)
+
+    login_user = Login.objects.get(id=request.session['uid'])
+    buyer = User.objects.get(loginid=login_user)
+
+    # Prevent booking own drawing
+    if drawing.user == buyer:
+        messages.error(request, "You cannot book your own drawing.")
+        return redirect(f"/drawing_detail?id={drawing_id}")
+
+    # Check if already booked
+    existing = DrawingBooking.objects.filter(buyer=buyer, drawing=drawing).exclude(status="rejected").first()
+    if existing:
+        messages.info(request, "You have already requested to book this drawing.")
+        return redirect("/my_drawing_bookings")
+
+    DrawingBooking.objects.create(
+        buyer=buyer,
+        drawing=drawing,
+        status="pending"
+    )
+
+    messages.success(request, "Booking request sent to the artist!")
+    return redirect("/my_drawing_bookings")
+
+
+def view_booking_requests(request):
+    """Artist view incoming booking requests for their drawings."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    login_user = Login.objects.get(id=request.session['uid'])
+    artist = User.objects.get(loginid=login_user)
+
+    # Get bookings for drawings owned by this artist
+    requests = DrawingBooking.objects.filter(drawing__user=artist).order_by('-date')
+
+    return render(request, "USER/view_booking_requests.html", {"requests": requests})
+
+
+def accept_booking(request):
+    """Artist accepts a booking request."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    bid = request.GET.get("id")
+    booking = get_object_or_404(DrawingBooking, id=bid)
+
+    login_user = Login.objects.get(id=request.session['uid'])
+    artist = User.objects.get(loginid=login_user)
+
+    if booking.drawing.user != artist:
+        messages.error(request, "Unauthorized action.")
+        return redirect("/view_booking_requests")
+
+    booking.status = "accepted"
+    booking.save()
+
+    messages.success(request, "Booking request accepted!")
+    return redirect("/view_booking_requests")
+
+
+def reject_booking(request):
+    """Artist rejects a booking request."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    bid = request.GET.get("id")
+    booking = get_object_or_404(DrawingBooking, id=bid)
+
+    login_user = Login.objects.get(id=request.session['uid'])
+    artist = User.objects.get(loginid=login_user)
+
+    if booking.drawing.user != artist:
+        messages.error(request, "Unauthorized action.")
+        return redirect("/view_booking_requests")
+
+    booking.status = "rejected"
+    booking.save()
+
+    messages.success(request, "Booking request rejected.")
+    return redirect("/view_booking_requests")
+
+
+def my_drawing_bookings(request):
+    """Buyer view their sent booking requests."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    login_user = Login.objects.get(id=request.session['uid'])
+    buyer = User.objects.get(loginid=login_user)
+
+    bookings = DrawingBooking.objects.filter(buyer=buyer).order_by('-date')
+
+    return render(request, "USER/my_drawing_bookings.html", {"bookings": bookings})
+
+
+def pay_for_drawing(request):
+    """Buyer pays for an accepted booking."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    bid = request.GET.get("id")
+    booking = get_object_or_404(DrawingBooking, id=bid)
+
+    login_user = Login.objects.get(id=request.session['uid'])
+    buyer = User.objects.get(loginid=login_user)
+
+    if booking.buyer != buyer:
+        messages.error(request, "Unauthorized action.")
+        return redirect("/my_drawing_bookings")
+
+    if booking.status != "accepted":
+        messages.error(request, "The artist has not accepted your request yet.")
+        return redirect("/my_drawing_bookings")
+
+    if request.method == "POST":
+        account_number = request.POST.get("account_number")
+        name_on_card = request.POST.get("name_on_card")
+
+        DrawingPayment.objects.create(
+            booking=booking,
+            buyer=buyer,
+            account_number=account_number[-4:], # Store only last 4 digits
+            name_on_card=name_on_card,
+            amount=booking.drawing.price
+        )
+
+        booking.status = "Paid"
+        booking.save()
+
+        messages.success(request, "Payment successful! The artwork is now yours.")
+        return redirect("/my_drawing_bookings")
+
+    return render(request, "USER/drawing_payment.html", {"booking": booking})
+
+
+def view_drawing_payment_details(request):
+    """View payment details for a booking."""
+    if 'uid' not in request.session:
+        return redirect("/login")
+
+    bid = request.GET.get("id")
+    booking = get_object_or_404(DrawingBooking, id=bid)
+    
+    # Verify access
+    login_user = Login.objects.get(id=request.session['uid'])
+    current_user = User.objects.get(loginid=login_user)
+    
+    if booking.buyer != current_user and booking.drawing.user != current_user:
+        messages.error(request, "Unauthorized view.")
+        return redirect("/user_home")
+
+    payment = DrawingPayment.objects.filter(booking=booking).first()
+
+    return render(request, "USER/drawing_payment_details.html", {
+        "booking": booking,
+        "payment": payment
+    })

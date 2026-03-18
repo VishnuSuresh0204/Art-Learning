@@ -1,232 +1,60 @@
 {% extends "ADMIN/commen.html" %}
 {% block content %}
 
-<style>
-    .admin-gallery-section {
-        padding: 60px 0;
-        background: #f8fafc;
-        min-height: 100vh;
-    }
-
-    .gallery-header {
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .gallery-header h2 {
-        font-weight: 800;
-        color: #1e293b;
-        font-size: 2.5rem;
-        letter-spacing: -1px;
-    }
-
-    .art-card-premium {
-        background: white;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        border: 1px solid #f1f5f9;
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .art-card-premium:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    .art-image-wrapper {
-        height: 300px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .art-image-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-
-    .art-card-premium:hover .art-image-wrapper img {
-        transform: scale(1.1);
-    }
-
-    .delete-overlay {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .art-card-premium:hover .delete-overlay {
-        opacity: 1;
-    }
-
-    .card-body-content {
-        padding: 25px;
-        flex-grow: 1;
-    }
-
-    .art-title {
-        font-weight: 800;
-        color: #1e293b;
-        font-size: 1.25rem;
-        margin-bottom: 5px;
-    }
-
-    .artist-info {
-        font-size: 0.85rem;
-        color: #64748b;
-        font-weight: 600;
-        margin-bottom: 15px;
-        display: block;
-    }
-
-    .art-description {
-        font-size: 0.95rem;
-        color: #475569;
-        line-height: 1.6;
-        margin-bottom: 20px;
-    }
-
-    .feedback-section {
-        background: #f8fafc;
-        border-radius: 16px;
-        padding: 20px;
-        margin-top: auto;
-    }
-
-    .feedback-title {
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: #94a3b8;
-        letter-spacing: 1px;
-        margin-bottom: 12px;
-        display: block;
-    }
-
-    .feedback-scroll {
-        max-height: 200px;
-        overflow-y: auto;
-        padding-right: 5px;
-    }
-
-    .feedback-item {
-        background: white;
-        padding: 12px;
-        border-radius: 12px;
-        margin-bottom: 10px;
-        border-left: 4px solid #4b49ac;
-        position: relative;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-    }
-
-    .feedback-user {
-        font-weight: 800;
-        font-size: 0.85rem;
-        color: #1e293b;
-        margin-bottom: 3px;
-        display: block;
-    }
-
-    .feedback-text {
-        font-size: 0.85rem;
-        color: #475569;
-        margin: 0;
-        line-height: 1.4;
-    }
-
-    .feedback-meta {
-        font-size: 0.75rem;
-        color: #94a3b8;
-        margin-top: 5px;
-        display: block;
-    }
-
-    .delete-feedback {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        color: #ef4444;
-        opacity: 0.3;
-        transition: opacity 0.3s;
-    }
-
-    .feedback-item:hover .delete-feedback {
-        opacity: 1;
-    }
-
-    /* Custom Scrollbar */
-    .feedback-scroll::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    .feedback-scroll::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .feedback-scroll::-webkit-scrollbar-thumb {
-        background: #e2e8f0;
-        border-radius: 10px;
-    }
-</style>
-
-<div class="admin-gallery-section">
+<div class="page-section">
     <div class="container">
-        <div class="gallery-header">
-            <h2>User Artwork Gallery</h2>
-            <p class="text-muted">High-quality submissions from our global artist community.</p>
+        <div class="row mb-4 align-items-center">
+            <div class="col-12 text-center">
+                <h2>All User Drawings</h2>
+                <p class="text-muted">Review all uploaded artwork and user feedback.</p>
+            </div>
         </div>
 
         {% if drawings %}
         <div class="row">
             {% for d in drawings %}
             <div class="col-lg-4 col-md-6 mb-5">
-                <div class="art-card-premium">
-                    <div class="art-image-wrapper">
-                        <img src="{{ d.image.url }}" alt="{{ d.title }}">
-                        <div class="delete-overlay">
-                            <a href="/delete_drawing/?id={{ d.id }}" class="btn btn-sm btn-danger shadow"
-                                onclick="return confirm('Delete this drawing history?')">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </div>
+                <div class="card h-100 shadow-sm"
+                    style="border: none; border-radius: 12px; overflow: hidden; background: white;">
+                    <div style="height: 250px; overflow: hidden; position: relative;">
+                        <img src="{{ d.image.url }}" class="card-img-top" alt="{{ d.title }}"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                        <a href="/delete_drawing?id={{ d.id }}" class="btn btn-sm btn-danger"
+                            style="position: absolute; top: 10px; right: 10px;"
+                            onclick="return confirm('Delete this drawing?')">
+                            <i class="fa fa-trash"></i>
+                        </a>
                     </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ d.title }}</h5>
+                        <p class="card-text text-muted mb-1"><small>By: {{ d.user.name }} | {{ d.date }}</small></p>
+                        <p class="card-text">{{ d.description }}</p>
 
-                    <div class="card-body-content">
-                        <h5 class="art-title">{{ d.title }}</h5>
-                        <span class="artist-info">
-                            <i class="fa fa-user-circle mr-1"></i> {{ d.user.name }} • {{ d.date }}
-                        </span>
-                        <p class="art-description">{{ d.description|truncatechars:120 }}</p>
-
-                        <div class="feedback-section">
-                            <span class="feedback-title">Appreciation & Reviews</span>
-                            <div class="feedback-scroll">
-                                {% if d.feedbacks %}
-                                {% for f in d.feedbacks %}
-                                <div class="feedback-item">
-                                    <span class="feedback-user text-primary">{{
-                                        f.user.name|default:f.user.loginid.username }}</span>
-                                    <p class="feedback-text">{{ f.comment }}</p>
-                                    <small class="feedback-meta">{{ f.date|date:"M d, Y" }}</small>
-                                    <a href="/delete_drawing_feedback/?id={{ f.id }}" class="delete-feedback"
-                                        onclick="return confirm('Delete this review?')">
-                                        <i class="fa fa-times-circle"></i>
-                                    </a>
-                                </div>
-                                {% endfor %}
-                                {% else %}
-                                <div class="text-center py-3">
-                                    <small class="text-muted italic">No reviews yet. Be the first to appreciate!</small>
-                                </div>
-                                {% endif %}
+                        <!-- Feedback Section -->
+                        <div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                            <h6 style="font-size: 0.9rem;">Feedback:</h6>
+                            {% if d.feedbacks %}
+                            <div style="max-height: 150px; overflow-y: auto;">
+                                <ul style="list-style:none; padding-left:0; font-size:0.85rem;">
+                                    {% for f in d.feedbacks %}
+                                    <li
+                                        style="margin-bottom:8px; background:#f9f9f9; padding:8px; border-radius:4px; border-left: 3px solid #4b49ac;">
+                                        <strong>{{ f.user.name|default:f.user.loginid.username }}:</strong>
+                                        <p class="mb-0">{{ f.comment }}</p>
+                                        <small class="text-muted">{{ f.date|date:"M d, Y" }}</small>
+                                        <a href="/delete_drawing_feedback?id={{ f.id }}"
+                                            style="color:#e74c3c; float:right;"
+                                            onclick="return confirm('Delete this feedback?');">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                        <div style="clear:both;"></div>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
                             </div>
+                            {% else %}
+                            <p style="font-size:0.8rem; color:#999;">No feedback yet.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -234,10 +62,8 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="glass-card text-center py-5">
-            <i class="fa fa-paint-brush fa-4x text-muted opacity-25 mb-4 d-block"></i>
-            <h3>The gallery is currently empty</h3>
-            <p class="text-muted">New artwork submissions will appear here.</p>
+        <div class="alert alert-info text-center">
+            No drawings uploaded yet.
         </div>
         {% endif %}
     </div>

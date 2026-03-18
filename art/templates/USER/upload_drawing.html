@@ -16,6 +16,7 @@
                         {% csrf_token %}
                         
                         <input type="text" name="title" placeholder="Drawing Title" required>
+                        <input type="number" name="price" placeholder="Price (₹)" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                         <textarea name="description" placeholder="Description" rows="4"></textarea>
                         <input type="file" name="image" accept="image/*" required>
                         

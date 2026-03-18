@@ -1,0 +1,74 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row mb-5 align-items-center">
+            <div class="col-md-12">
+                <div class="contact-text">
+                    <span>Artist Dashboard</span>
+                    <h2>Booking Requests</h2>
+                </div>
+            </div>
+        </div>
+
+        {% if requests %}
+        <div class="table-responsive">
+            <table class="table table-hover shadow-sm" style="border-radius: 12px; overflow: hidden; background: white;">
+                <thead style="background: #4b49ac; color: white;">
+                    <tr>
+                        <th>Artwork</th>
+                        <th>Buyer</th>
+                        <th>Date</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ req.drawing.image.url }}" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                                <span>{{ req.drawing.title }}</span>
+                            </div>
+                        </td>
+                        <td>{{ req.buyer.name }}</td>
+                        <td>{{ req.date }}</td>
+                        <td>₹{{ req.drawing.price }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if req.status == 'pending' %}badge-warning
+                                {% elif req.status == 'accepted' %}badge-success
+                                {% elif req.status == 'Paid' %}badge-primary
+                                {% else %}badge-danger{% endif %}">
+                                {{ req.status|capfirst }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if req.status == 'pending' %}
+                            <a href="/accept_booking?id={{ req.id }}" class="btn btn-sm btn-success">Accept</a>
+                            <a href="/reject_booking?id={{ req.id }}" class="btn btn-sm btn-danger ml-2">Reject</a>
+                            {% elif req.status == 'Paid' %}
+                            <a href="/view_drawing_payment_details?id={{ req.id }}" class="btn btn-sm btn-info">View Payment</a>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            <h4>No booking requests yet.</h4>
+            <p>Wait for collectors to discover your art!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

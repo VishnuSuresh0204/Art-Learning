@@ -15,29 +15,17 @@
                     <div class="drawing-detail" style="margin-bottom: 30px;">
                         <img src="{{ drawing.image.url }}" alt="{{ drawing.title }}"
                             style="width:100%; max-width:600px; height:auto; border-radius:10px; margin-bottom: 20px;">
-
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p><strong>Description:</strong> {{ drawing.description }}</p>
-                                <p><strong>Artist:</strong> {{ drawing.user.name }}</p>
-                                <p><strong>Uploaded on:</strong> {{ drawing.date }}</p>
-                            </div>
-
-                            <div class="actions">
-                                {% if request.session.uid == drawing.user.loginid.id %}
-                                <a href="/edit_drawing?id={{ drawing.id }}" class="site-btn mb-2"
-                                    style="display: block; width: 150px; text-align: center;">Edit Art</a>
-                                <a href="/delete_drawing?id={{ drawing.id }}" class="site-btn"
-                                    style="display: block; width: 150px; text-align: center; background: #dc3545; border-color: #dc3545;"
-                                    onclick="return confirm('Delete this artwork permanently?');">Delete Art</a>
-                                {% else %}
-                                <a href="/chat/{{ drawing.user.loginid.id }}/" class="site-btn"
-                                    style="display: block; width: 150px; text-align: center; background: #25d366; border-color: #25d366;">Chat
-                                    with Artist</a>
-                                {% endif %}
-                            </div>
-                        </div>
+                        <p><strong>Description:</strong> {{ drawing.description }}</p>
+                        <p><strong>Artist:</strong> {{ drawing.user.name }}</p>
+                        <p><strong>Price:</strong> ₹{{ drawing.price }}</p>
+                        <p><strong>Uploaded on:</strong> {{ drawing.date }}</p>
                     </div>
+
+                    {% if request.session.uid != drawing.user.loginid.id %}
+                    <div style="margin-bottom: 30px;">
+                        <a href="/book_drawing?id={{ drawing.id }}" class="site-btn" style="background: #4b49ac; color: white;">Book for Purchase</a>
+                    </div>
+                    {% endif %}
 
                     <hr>
 

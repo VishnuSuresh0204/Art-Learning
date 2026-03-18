@@ -1,199 +1,82 @@
 {% extends "ADMIN/commen.html" %}
+
 {% load static %}
 {% block content %}
 
-<style>
-	:root {
-		--accent: #4b49ac;
-		--accent-hover: #3f3e91;
-		--glass: rgba(255, 255, 255, 0.95);
-		--shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-	}
-
-	.admin-hero {
-		padding: 60px 0;
-		background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-		text-align: center;
-		margin-bottom: 40px;
-		border-radius: 0 0 40px 40px;
-		box-shadow: inset 0 -20px 40px rgba(0, 0, 0, 0.02);
-	}
-
-	.admin-hero h1 {
-		font-weight: 800;
-		font-size: 2.8rem;
-		color: #1e293b;
-		letter-spacing: -1.5px;
-		margin-bottom: 10px;
-	}
-
-	.admin-hero p {
-		color: #64748b;
-		font-size: 1.1rem;
-	}
-
-	.dashboard-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-		gap: 25px;
-		padding-bottom: 60px;
-	}
-
-	.stat-card {
-		background: var(--glass);
-		border: 1px solid rgba(255, 255, 255, 0.6);
-		border-radius: 24px;
-		padding: 35px;
-		text-align: center;
-		transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-		box-shadow: var(--shadow);
-		position: relative;
-		overflow: hidden;
-		text-decoration: none;
-		display: block;
-	}
-
-	.stat-card:hover {
-		transform: translateY(-10px);
-		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-		text-decoration: none;
-	}
-
-	.stat-card i {
-		font-size: 2.5rem;
-		margin-bottom: 20px;
-		display: block;
-		transition: transform 0.3s ease;
-	}
-
-	.stat-card:hover i {
-		transform: rotate(10deg) scale(1.1);
-	}
-
-	.stat-card h4 {
-		color: #1e293b;
-		font-weight: 700;
-		margin-bottom: 10px;
-		font-size: 1.25rem;
-	}
-
-	.stat-card p {
-		color: #64748b;
-		font-size: 0.9rem;
-		line-height: 1.5;
-		margin-bottom: 20px;
-	}
-
-	.card-link {
-		color: var(--accent);
-		font-weight: 700;
-		font-size: 0.9rem;
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	/* Card Themes */
-	.card-users {
-		border-top: 5px solid #4b49ac;
-	}
-
-	.card-users i {
-		color: #4b49ac;
-	}
-
-	.card-shops {
-		border-top: 5px solid #10b981;
-	}
-
-	.card-shops i {
-		color: #10b981;
-	}
-
-	.card-videos {
-		border-top: 5px solid #0ea5e9;
-	}
-
-	.card-videos i {
-		color: #0ea5e9;
-	}
-
-	.card-drawings {
-		border-top: 5px solid #f59e0b;
-	}
-
-	.card-drawings i {
-		color: #f59e0b;
-	}
-
-	.card-feedback {
-		border-top: 5px solid #8b5cf6;
-	}
-
-	.card-feedback i {
-		color: #8b5cf6;
-	}
-
-	.card-orders {
-		border-top: 5px solid #ef4444;
-	}
-
-	.card-orders i {
-		color: #ef4444;
-	}
-</style>
-
-<div class="admin-hero">
+<div class="page-section">
 	<div class="container">
-		<h1>Admin Command Center</h1>
-		<p>Manage users, content, and gallery operations with ease.</p>
-	</div>
-</div>
 
-<div class="container">
-	<div class="dashboard-grid">
+		<div class="row mb-5 text-center">
+			<div class="col-12">
+				<h1 class="display-4">Admin Dashboard</h1>
+				<p class="lead">Welcome to the Art Gallery Management System</p>
+			</div>
+		</div>
 
-		<a href="/view_users/" class="stat-card card-users">
-			<i class="fa fa-users"></i>
-			<h4>User Directory</h4>
-			<p>Review and moderate registered user accounts and activity.</p>
-			<span class="card-link">Enter Directory <i class="fa fa-chevron-right"></i></span>
-		</a>
+		<!-- Dashboard Widgets -->
+		<div class="row justify-content-center">
 
-		<a href="/view_shops/" class="stat-card card-shops">
-			<i class="fa fa-shopping-bag"></i>
-			<h4>Shop Management</h4>
-			<p>Approve new art shops and manage existing partnerships.</p>
-			<span class="card-link">Manager Shops <i class="fa fa-chevron-right"></i></span>
-		</a>
+			<!-- Users Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-primary text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-users fa-3x mb-3"></i>
+						<h4 class="card-title">User Management</h4>
+						<p class="card-text">View registered users, block/unblock accounts.</p>
+						<a href="/view_users" class="btn btn-light mt-2">Manage Users</a>
+					</div>
+				</div>
+			</div>
 
-		<a href="/view_videos/" class="stat-card card-videos">
-			<i class="fa fa-video-camera"></i>
-			<h4>Video Tutorials</h4>
-			<p>Publish and organize creative tutorials for your community.</p>
-			<span class="card-link">Video Library <i class="fa fa-chevron-right"></i></span>
-		</a>
+			<!-- Videos Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-info text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-video-camera fa-3x mb-3"></i>
+						<h4 class="card-title">Tutorials</h4>
+						<p class="card-text">Add and manage tutorial videos.</p>
+						<a href="/view_videos" class="btn btn-light mt-2">Manage Videos</a>
+					</div>
+				</div>
+			</div>
 
-		<a href="/admin_view_drawings/" class="stat-card card-drawings">
-			<i class="fa fa-paint-brush"></i>
-			<h4>Art Submissions</h4>
-			<p>Curate and oversee all artistic submissions in the gallery.</p>
-			<span class="card-link">View Gallery <i class="fa fa-chevron-right"></i></span>
-		</a>
+			<!-- Products Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-success text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-shopping-cart fa-3x mb-3"></i>
+						<h4 class="card-title">Products</h4>
+						<p class="card-text">Manage inventory and shop items.</p>
+						<a href="/view_products" class="btn btn-light mt-2">Manage Products</a>
+					</div>
+				</div>
+			</div>
 
-		<a href="/view_feedback/" class="stat-card card-feedback">
-			<i class="fa fa-comments"></i>
-			<h4>User Feedback</h4>
-			<p>Stay connected with your community by reviewing feedback.</p>
-			<span class="card-link">Read Messages <i class="fa fa-chevron-right"></i></span>
-		</a>
+			<!-- Feedback Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-warning text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-comments fa-3x mb-3"></i>
+						<h4 class="card-title">Feedback</h4>
+						<p class="card-text">Review and reply to user inquiries.</p>
+						<a href="/view_feedback" class="btn btn-light mt-2">View Feedback</a>
+					</div>
+				</div>
+			</div>
 
-		<a href="/my_orders/" class="stat-card card-orders">
-			<i class="fa fa-credit-card"></i>
-			<h4>Marketplace Orders</h4>
-			<p>Monitor transactions and track order fulfillment status.</p>
-			<span class="card-link">Order Desk <i class="fa fa-chevron-right"></i></span>
-		</a>
+			<!-- Orders Card -->
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow text-center border-0 bg-danger text-white" style="border-radius: 15px;">
+					<div class="card-body">
+						<i class="fa fa-list-alt fa-3x mb-3"></i>
+						<h4 class="card-title">Orders</h4>
+						<p class="card-text">View and update customer order statuses.</p>
+						<a href="/admin_view_orders" class="btn btn-light mt-2">Manage Orders</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
 
 	</div>
 </div>

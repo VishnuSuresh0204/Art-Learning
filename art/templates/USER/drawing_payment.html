@@ -1,0 +1,93 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row">
+            <div class="col-12 mb-4">
+                <h2>Artwork Purchase</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Artwork Summary -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="mb-0 text-white">Artwork Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-4">
+                            <img src="{{ booking.drawing.image.url }}" alt="" style="width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin-right: 20px;">
+                            <div>
+                                <h5>{{ booking.drawing.title }}</h5>
+                                <p class="text-muted mb-0">Artist: {{ booking.drawing.user.name }}</p>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>Purchase Amount</strong>
+                                <strong style="font-size: 1.5rem; color: #28a745;">₹{{ booking.drawing.price }}</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0 text-white">Secure Payment</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label>Name on Card</label>
+                                <input type="text" name="name_on_card" class="form-control" placeholder="Enter full name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" name="account_number" class="form-control" 
+                                    placeholder="0000 0000 0000 0000" 
+                                    pattern="\d{16,19}" title="Enter a valid 16-19 digit card number" 
+                                    minlength="16" maxlength="19" 
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Expiry Date</label>
+                                        <input type="text" name="expiry" class="form-control" 
+                                            placeholder="MM/YY" 
+                                            pattern="(0[1-9]|1[0-2])\/[0-9]{2}" title="Enter a valid expiry date (MM/YY)" 
+                                            maxlength="5" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>CVV</label>
+                                        <input type="password" name="cvv" class="form-control" 
+                                            placeholder="123" 
+                                            pattern="\d{3}" title="Enter a 3-digit CVV" 
+                                            minlength="3" maxlength="3" 
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="site-btn btn-block mt-3" style="background: #4b49ac;">Confirm & Pay ₹{{ booking.drawing.price }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

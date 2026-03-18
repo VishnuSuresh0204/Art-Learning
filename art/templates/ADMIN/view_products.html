@@ -1,0 +1,70 @@
+{% extends "ADMIN/commen.html" %}
+
+{% block content %}
+
+<div class="page-section">
+    <div class="container">
+
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-8">
+                <h2>Manage Products</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <a href="/add_product" class="site-btn">Add New Product</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive shadow-sm" style="background: white; border-radius: 10px; padding: 20px;">
+                    <table class="table table-hover align-middle">
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="width: 100px;">Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in products %}
+                            <tr>
+                                <td>
+                                    <div style="width: 60px; height: 60px; overflow: hidden; border-radius: 5px;">
+                                        <img src="{{ p.image.url }}" alt="{{ p.name }}"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                </td>
+                                <td><strong>{{ p.name }}</strong></td>
+                                <td>{{ p.category }}</td>
+                                <td>₹{{ p.price }}</td>
+                                <td>{{ p.qty }}</td>
+                                <td>
+                                    {% if p.status == 'Available' and p.qty > 0 %}
+                                    <span class="badge badge-success">Available</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Unavailable</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="/edit_product?id={{ p.id }}"
+                                            class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a href="/delete_product?id={{ p.id }}" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Delete this product?')">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -2,254 +2,49 @@
 {% load static %}
 {% block content %}
 
-<style>
-    :root {
-        --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        --hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-        --accent-color: #2563eb;
-        --glass-bg: rgba(255, 255, 255, 0.95);
-    }
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <h2>Available Products</h2>
 
-    .product-hero {
-        padding: 60px 0 40px;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        text-align: center;
-        margin-bottom: 40px;
-        border-radius: 0 0 40px 40px;
-    }
+        {% if products %}
+        <div class="row" style="margin-top:30px;">
+            {% for p in products %}
+            <div class="col-lg-4 col-md-6 mb-5">
+                <div class="card h-100 shadow-sm" style="border: none; border-radius: 12px; overflow: hidden;">
+                    <div style="height: 250px; overflow: hidden;">
+                        <img src="{{ p.image.url }}" class="card-img-top" alt="{{ p.name }}"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ p.name }}</h5>
+                        <p class="card-text text-muted mb-1"><small>{{ p.category }}</small></p>
+                        <p class="card-text text-primary font-weight-bold">₹{{ p.price }}</p>
 
-    .product-hero h2 {
-        font-weight: 800;
-        font-size: 2.5rem;
-        color: #1e293b;
-        margin-bottom: 10px;
-        letter-spacing: -1px;
-    }
+                        <p class="card-text flex-grow-1">{{ p.desc|truncatechars:80 }}</p>
 
-    .product-hero p {
-        color: #64748b;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 30px;
-        padding-bottom: 80px;
-    }
-
-    .art-card {
-        background: var(--glass-bg);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 20px;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        position: relative;
-    }
-
-    .art-card:hover {
-        transform: translateY(-10px);
-        box-shadow: var(--hover-shadow);
-    }
-
-    .card-img-wrapper {
-        position: relative;
-        height: 320px;
-        overflow: hidden;
-    }
-
-    .card-img-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-
-    .art-card:hover .card-img-wrapper img {
-        transform: scale(1.08);
-    }
-
-    .category-badge {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(5px);
-        padding: 6px 14px;
-        border-radius: 100px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--accent-color);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        z-index: 2;
-    }
-
-    .card-content {
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-    }
-
-    .card-content h3 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 8px;
-    }
-
-    .price-tag {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 15px;
-    }
-
-    .price-tag span {
-        font-size: 1rem;
-        font-weight: 400;
-        color: #94a3b8;
-        margin-right: 2px;
-    }
-
-    .card-desc {
-        color: #64748b;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin-bottom: 20px;
-        flex-grow: 1;
-    }
-
-    .card-footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-top: 20px;
-        border-top: 1px solid #f1f5f9;
-    }
-
-    .stock-info {
-        font-size: 0.85rem;
-        color: #94a3b8;
-        font-weight: 500;
-    }
-
-    .btn-action {
-        background: var(--accent-color);
-        color: white;
-        border: none;
-        padding: 12px 25px;
-        border-radius: 12px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        text-align: center;
-        width: 100%;
-    }
-
-    .btn-action:hover {
-        background: #1d4ed8;
-        transform: scale(1.02);
-        color: white;
-    }
-
-    .btn-action.in-cart {
-        background: #f1f5f9;
-        color: #64748b;
-        cursor: default;
-    }
-
-    .btn-action.out-of-stock {
-        background: #fee2e2;
-        color: #ef4444;
-        cursor: default;
-    }
-
-    /* Animation for empty state */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .empty-state {
-        animation: fadeIn 0.8s ease forwards;
-    }
-</style>
-
-<div class="product-hero">
-    <div class="container">
-        <h2>Gallery Shop</h2>
-        <p>Discover unique art pieces and supplies curated for creators and collectors alike.</p>
-    </div>
-</div>
-
-<div class="container">
-    {% if products %}
-    <div class="product-grid">
-        {% for p in products %}
-        <div class="art-card">
-            <div class="category-badge">{{ p.category }}</div>
-            <div class="card-img-wrapper">
-                <img src="{{ p.image.url }}" alt="{{ p.name }}">
-            </div>
-            <div class="card-content">
-                <h3>{{ p.name }}</h3>
-                <div class="price-tag"><span>₹</span>{{ p.price }}</div>
-                <p class="card-desc">{{ p.desc|truncatechars:100 }}</p>
-
-                <div class="card-footer">
-                    <div class="stock-info">
-                        {% if p.qty > 0 %}
-                        {{ p.qty }} units left
-                        {% else %}
-                        Sold Out
-                        {% endif %}
+                        <div class="mt-3">
+                            <p class="mb-2"><small>Available: {{ p.qty }}</small></p>
+                            {% if p.status == "Available" and p.qty > 0 %}
+                            {% if p.id in cart_product_ids %}
+                            <button class="btn btn-secondary btn-block" disabled>✔ In Cart</button>
+                            {% else %}
+                            <a href="/add_to_cart?id={{ p.id }}" class="site-btn btn-block text-center">Add to Cart</a>
+                            {% endif %}
+                            {% else %}
+                            <button class="btn btn-danger btn-block" disabled>Out of Stock</button>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-
-                <div class="mt-3">
-                    {% if p.qty > 0 %}
-                    {% if p.id in cart_product_ids %}
-                    <button class="btn-action in-cart" disabled>
-                        <i class="fa fa-check mr-2"></i>In Cart
-                    </button>
-                    {% else %}
-                    <a href="/add_to_cart?id={{ p.id }}" class="btn-action">
-                        Add to Cart
-                    </a>
-                    {% endif %}
-                    {% else %}
-                    <button class="btn-action out-of-stock" disabled>
-                        Out of Stock
-                    </button>
-                    {% endif %}
-                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state text-center py-5">
-        <div class="mb-4">
-            <i class="fa fa-shopping-bag fa-4x text-muted opacity-25"></i>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            No products availble at the moment.
         </div>
-        <h4 class="text-muted">No products available at the moment.</h4>
-        <p>Please check back later for our new collection!</p>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
 {% endblock %}

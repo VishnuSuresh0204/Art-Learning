@@ -30,23 +30,6 @@ class User(models.Model):
 
 
 # -----------------------------------------------------------
-# SHOP PROFILE TABLE
-# -----------------------------------------------------------
-class Shop(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    phone = models.IntegerField()
-    address = models.CharField(max_length=300)
-    image = models.ImageField(upload_to="shop_images", null=True)
-    loginid = models.ForeignKey(Login, on_delete=models.CASCADE)
-    # pending → approved → rejected → blocked
-    status = models.CharField(max_length=40, default='pending', null=True)
-
-    def __str__(self):
-        return self.name
-
-
-# -----------------------------------------------------------
 # USER UPLOAD DRAWINGS
 # -----------------------------------------------------------
 class Drawing(models.Model):
@@ -54,6 +37,7 @@ class Drawing(models.Model):
     title = models.CharField(max_length=150)
     description = models.CharField(max_length=300, null=True)
     image = models.ImageField(upload_to="drawings")
+    price = models.IntegerField(default=0)
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
@@ -94,7 +78,6 @@ class VideoRequest(models.Model):
 # PRODUCTS ADDED BY ADMIN
 # -----------------------------------------------------------
 class Products(models.Model):
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=100)       # Normal text field
     price = models.IntegerField()
@@ -172,14 +155,30 @@ class ProductFeedback(models.Model):
 
 
 # -----------------------------------------------------------
-# CHAT TABLE
+# DRAWING BOOKING TABLE
 # -----------------------------------------------------------
-class Chat(models.Model):
-    sender = models.ForeignKey(Login, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(Login, on_delete=models.CASCADE, related_name='received_messages')
-    message = models.TextField()
-    date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, default='unread')  # unread/read
+class DrawingBooking(models.Model):
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bought_drawings")
+    drawing = models.ForeignKey(Drawing, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    
+    # pending → accepted → rejected → Paid
+    status = models.CharField(max_length=40, default='pending')
 
     def __str__(self):
-        return f"{self.sender.username} -> {self.receiver.username}"
+        return f"Booking {self.id} - {self.buyer.name} for {self.drawing.title}"
+
+
+# -----------------------------------------------------------
+# DRAWING PAYMENT TABLE
+# -----------------------------------------------------------
+class DrawingPayment(models.Model):
+    booking = models.ForeignKey(DrawingBooking, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE)
+    account_number = models.CharField(max_length=20)
+    name_on_card = models.CharField(max_length=50)
+    amount = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Payment {self.id} for Booking {self.booking.id}"

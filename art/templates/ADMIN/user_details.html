@@ -2,387 +2,94 @@
 {% load static %}
 {% block content %}
 
-<style>
-    .profile-hero {
-        background: white;
-        padding: 50px 0;
-        border-bottom: 1px solid #f1f5f9;
-        margin-bottom: 40px;
-    }
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <h2>User Details</h2>
 
-    .hero-glass-card {
-        background: white;
-        border-radius: 30px;
-        padding: 40px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-        border: 1px solid #f1f5f9;
-        display: flex;
-        align-items: center;
-        gap: 40px;
-        position: relative;
-        overflow: hidden;
-    }
+        <div style="background:white; padding:20px; border-radius:8px; border:1px solid #ddd; position:relative;">
+            <h3>{{ user.loginid.username }}</h3>
 
-    .hero-glass-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 300px;
-        height: 100%;
-        background: linear-gradient(135deg, rgba(75, 73, 172, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
-        z-index: 0;
-    }
+            <!-- Block / Unblock User Button -->
+            {% if user.loginid.is_active %}
+            <a href="/block_user?id={{ user.id }}"
+                style="position:absolute; top:20px; right:150px; padding:6px 12px; background:#f39c12; color:white; border-radius:4px; text-decoration:none;"
+                onclick="return confirm('Are you sure you want to block this user?');">
+                Block
+            </a>
+            {% else %}
+            <a href="/unblock_user?id={{ user.id }}"
+                style="position:absolute; top:20px; right:150px; padding:6px 12px; background:#27ae60; color:white; border-radius:4px; text-decoration:none;"
+                onclick="return confirm('Are you sure you want to unblock this user?');">
+                Unblock
+            </a>
+            {% endif %}
 
-    .profile-avatar-wrapper {
-        position: relative;
-        z-index: 1;
-    }
+            <!-- Delete User Button -->
+            <a href="/delete_user?id={{ user.id }}"
+                style="position:absolute; top:20px; right:20px; padding:6px 12px; background:#e74c3c; color:white; border-radius:4px; text-decoration:none;"
+                onclick="return confirm('Are you sure you want to delete this user?');">
+                Delete User
+            </a>
 
-    .profile-avatar {
-        width: 160px;
-        height: 160px;
-        border-radius: 40px;
-        object-fit: cover;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        border: 5px solid white;
-    }
+            {% if user.image %}
+            <img src="{{ user.image.url }}" width="150" style="border-radius:8px; margin-top:10px;">
+            {% endif %}
 
-    .profile-info {
-        flex-grow: 1;
-        z-index: 1;
-    }
-
-    .profile-info h1 {
-        font-weight: 900;
-        color: #1e293b;
-        margin-bottom: 5px;
-        font-size: 2.5rem;
-        letter-spacing: -1px;
-    }
-
-    .username-tag {
-        font-size: 1.1rem;
-        color: #4b49ac;
-        font-weight: 700;
-        display: block;
-        margin-bottom: 20px;
-    }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-
-    .info-item {
-        background: #f8fafc;
-        padding: 15px;
-        border-radius: 16px;
-        border: 1px solid #f1f5f9;
-    }
-
-    .info-label {
-        font-size: 0.7rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        color: #94a3b8;
-        letter-spacing: 1px;
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .info-value {
-        font-weight: 700;
-        color: #334155;
-        font-size: 0.95rem;
-        word-break: break-word;
-    }
-
-    .profile-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        z-index: 1;
-    }
-
-    .btn-action-premium {
-        padding: 12px 25px;
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        min-width: 160px;
-    }
-
-    .btn-status-toggle {
-        background: #4b49ac;
-        color: white;
-    }
-
-    .btn-status-toggle:hover {
-        background: #3f3e91;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(75, 73, 172, 0.2);
-    }
-
-    .btn-delete-profile {
-        background: #fff1f2;
-        color: #e11d48;
-        border: 1px solid #fecdd3;
-    }
-
-    .btn-delete-profile:hover {
-        background: #ffe4e6;
-        transform: translateY(-2px);
-    }
-
-    .gallery-section {
-        padding: 40px 0 80px;
-        background: #f8fafc;
-    }
-
-    .section-title {
-        font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 30px;
-        padding-left: 15px;
-        border-left: 5px solid #4b49ac;
-    }
-
-    .artwork-card {
-        background: white;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        border: 1px solid #f1f5f9;
-        margin-bottom: 30px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .artwork-img-box {
-        height: 250px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .artwork-img-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .delete-artwork-btn {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: rgba(255, 255, 255, 0.9);
-        color: #ef4444;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(5px);
-        transition: all 0.3s;
-    }
-
-    .delete-artwork-btn:hover {
-        background: #ef4444;
-        color: white;
-        transform: scale(1.1);
-    }
-
-    .artwork-body {
-        padding: 25px;
-        flex-grow: 1;
-    }
-
-    .artwork-title {
-        font-weight: 800;
-        color: #1e293b;
-        font-size: 1.25rem;
-        margin-bottom: 10px;
-    }
-
-    .artwork-desc {
-        color: #64748b;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin-bottom: 20px;
-    }
-
-    .feedback-hub {
-        background: #f8fafc;
-        border-radius: 16px;
-        padding: 15px;
-    }
-
-    .feedback-label {
-        font-size: 0.75rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        color: #94a3b8;
-        margin-bottom: 10px;
-        display: block;
-    }
-
-    .feedback-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .feedback-bubble {
-        background: white;
-        padding: 10px 15px;
-        border-radius: 12px;
-        margin-bottom: 8px;
-        font-size: 0.85rem;
-        border-left: 3px solid #4b49ac;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .reviewer-name {
-        font-weight: 800;
-        color: #1e293b;
-        display: block;
-        margin-bottom: 2px;
-    }
-
-    .review-text {
-        color: #64748b;
-    }
-
-    .remove-review {
-        color: #cbd5e1;
-        transition: color 0.3s;
-    }
-
-    .remove-review:hover {
-        color: #ef4444;
-    }
-</style>
-
-<div class="profile-hero">
-    <div class="container">
-        <div class="hero-glass-card">
-            <div class="profile-avatar-wrapper">
-                {% if user.image %}
-                <img src="{{ user.image.url }}" class="profile-avatar" alt="">
-                {% else %}
-                <div class="profile-avatar d-flex align-items-center justify-content-center"
-                    style="background: #f1f5f9; color: #4b49ac; font-size: 4rem; font-weight: 900;">
-                    {{ user.name|slice:":1" }}
-                </div>
-                {% endif %}
-            </div>
-
-            <div class="profile-info">
-                <h1>{{ user.name }}</h1>
-                <span class="username-tag">@{{ user.loginid.username }}</span>
-
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Email Address</span>
-                        <span class="info-value">{{ user.email }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Phone Number</span>
-                        <span class="info-value">{{ user.phone }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Member Since</span>
-                        <span class="info-value">{{ user.loginid.date_joined|date:"F Y" }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="profile-actions">
-                {% if user.loginid.is_active %}
-                <a href="/block_user/?id={{ user.id }}" class="btn-action-premium btn-status-toggle"
-                    onclick="return confirm('Block this user?')">
-                    <i class="fa fa-ban"></i> Block User
-                </a>
-                {% else %}
-                <a href="/unblock_user/?id={{ user.id }}" class="btn-action-premium btn-status-toggle"
-                    style="background:#059669;" onclick="return confirm('Unblock this user?')">
-                    <i class="fa fa-check-circle"></i> Unblock
-                </a>
-                {% endif %}
-
-                <a href="/delete_user/?id={{ user.id }}" class="btn-action-premium btn-delete-profile"
-                    onclick="return confirm('Permanently delete this account?')">
-                    <i class="fa fa-trash"></i> Delete User
-                </a>
-            </div>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            <p><strong>Address:</strong> {{ user.address }}</p>
+            <p><strong>Joined:</strong> {{ user.loginid.date_joined }}</p>
         </div>
-    </div>
-</div>
 
-<div class="gallery-section">
-    <div class="container">
-        <h3 class="section-title">Artist's Portfolio</h3>
+        <hr style="margin:30px 0;">
+
+        <h3>User Drawings</h3>
 
         {% if drawings %}
         <div class="row">
             {% for d in drawings %}
-            <div class="col-lg-4 col-md-6">
-                <div class="artwork-card">
-                    <div class="artwork-img-box">
-                        <img src="{{ d.image.url }}" alt="">
-                        <a href="/delete_drawing/?id={{ d.id }}" class="delete-artwork-btn"
-                            onclick="return confirm('Delete this drawing history?')">
-                            <i class="fa fa-trash"></i>
-                        </a>
-                    </div>
-                    <div class="artwork-body">
-                        <h5 class="artwork-title">{{ d.title }}</h5>
-                        <p class="artwork-desc">{{ d.description|truncatechars:100 }}</p>
+            <div class="col-md-4" style="margin-bottom:20px;">
+                <div
+                    style="border:1px solid #ccc; padding:10px; border-radius:8px; background:white; position:relative;">
+                    <img src="{{ d.image.url }}" style="width:100%; border-radius:5px;">
+                    <h4>{{ d.title }}</h4>
+                    <p>{{ d.description }}</p>
+                    <small>Uploaded: {{ d.date }}</small>
 
-                        <div class="feedback-hub">
-                            <span class="feedback-label">Appreciation</span>
-                            {% if d.feedbacks %}
-                            <ul class="feedback-list">
-                                {% for f in d.feedbacks %}
-                                <li class="feedback-bubble">
-                                    <div>
-                                        <span class="reviewer-name">{{ f.user.name|default:f.user.loginid.username
-                                            }}</span>
-                                        <span class="review-text">{{ f.comment }}</span>
-                                    </div>
-                                    <a href="/delete_drawing_feedback/?id={{ f.id }}" class="remove-review"
-                                        onclick="return confirm('Remove review?')">
-                                        <i class="fa fa-times-circle"></i>
-                                    </a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                            {% else %}
-                            <p class="text-center text-muted small py-2 mb-0"><i>No feedback yet.</i></p>
-                            {% endif %}
-                        </div>
+                    <!-- Feedback Section -->
+                    <div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                        <h6 style="font-size: 0.9rem;">Feedback:</h6>
+                        {% if d.feedbacks %}
+                        <ul style="list-style:none; padding-left:0; font-size:0.85rem;">
+                            {% for f in d.feedbacks %}
+                            <li style="margin-bottom:8px; background:#f9f9f9; padding:5px; border-radius:4px;">
+                                <strong>{{ f.user.name|default:f.user.loginid.username }}:</strong>
+                                {{ f.comment }}
+                                <a href="/delete_drawing_feedback?id={{ f.id }}" style="color:#e74c3c; float:right;"
+                                    onclick="return confirm('Delete this feedback?');">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                                <div style="clear:both;"></div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p style="font-size:0.8rem; color:#999;">No feedback yet.</p>
+                        {% endif %}
                     </div>
+
+                    <!-- Delete Drawing Button -->
+                    <a href="/delete_drawing?id={{ d.id }}"
+                        style="position:absolute; top:10px; right:10px; padding:4px 8px; background:#e74c3c; color:white; border-radius:4px; text-decoration:none;"
+                        onclick="return confirm('Are you sure you want to delete this drawing?');">
+                        Delete
+                    </a>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="text-center py-5 glass-card">
-            <i class="fa fa-paint-brush fa-3x text-muted opacity-25 mb-4 d-block"></i>
-            <p class="text-muted">This user hasn't uploaded any drawings yet.</p>
-        </div>
+        <p>No drawings uploaded by this user.</p>
         {% endif %}
     </div>
 </div>

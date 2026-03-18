@@ -48,25 +48,25 @@
 			</div>
 			<div class="header-warp">
 				<a href="" class="site-logo">
-					<img src="/static/img/logo.png" alt="">
+					<img src="./static/img/logo.png" alt="">
 				</a>
 				<img src="/static/img/menu-icon.png" alt="" class="menu-icon">
 				<ul class="main-menu">
-					<li class="{% if request.path == '/admin_home/' %}active{% endif %}"><a href="/admin_home/">Home</a>
+					<li class="{% if request.path == '/admin_home/' %}active{% endif %}"><a href="/admin_home">Home</a>
 					</li>
-					<li class="{% if request.path == '/view_users/' %}active{% endif %}"><a
-							href="/view_users/">Users</a>
-					</li>
-					<li class="{% if request.path == '/view_shops/' %}active{% endif %}"><a
-							href="/view_shops/">Shops</a>
+					<li class="{% if request.path == '/view_users/' %}active{% endif %}"><a href="/view_users">Users</a>
 					</li>
 					<li class="{% if request.path == '/view_videos/' %}active{% endif %}"><a
-							href="/view_videos/">Videos</a></li>
+							href="/view_videos">Videos</a></li>
 					<li class="{% if request.path == '/admin_view_drawings/' %}active{% endif %}"><a
-							href="/admin_view_drawings/">Drawings</a></li>
+							href="/admin_view_drawings">Drawings</a></li>
+					<li class="{% if request.path == '/view_products/' %}active{% endif %}"><a
+							href="/view_products">Products</a></li>
 					<li class="{% if request.path == '/view_feedback/' %}active{% endif %}"><a
-							href="/view_feedback/">Feedbacks</a></li>
-					<li><a href="/login/">Log Out</a></li>
+							href="/view_feedback">Feedbacks</a></li>
+					<li class="{% if request.path == '/admin_view_orders/' %}active{% endif %}"><a
+							href="/admin_view_orders">Orders</a></li>
+					<li><a href="/login">Log Out</a></li>
 
 				</ul>
 				<div class="social-links-warp">

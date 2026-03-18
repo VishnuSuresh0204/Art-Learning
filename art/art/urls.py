@@ -11,19 +11,11 @@ urlpatterns = [
     # --- AUTHENTICATION ---
     path('', views.home),
     path('register/', views.register),
-    path('shop_register/', views.shop_register),
     path('login/', views.login_view),
     path('about/', views.about),
 
     # --- USER PROFILE & NAVIGATION ---
     path('user_home/', views.user_home),
-    path('shop_home/', views.shop_home),
-    path('shop_add_product/', views.shop_add_product),
-    path('shop_view_products/', views.shop_view_products),
-    path('shop_edit_product/', views.shop_edit_product),
-    path('shop_delete_product/', views.shop_delete_product),
-    path('shop_view_bookings/', views.shop_view_bookings),
-    path('shop_update_booking_status/', views.shop_update_booking_status),
     path('profile', views.profile),
     path('edit_profile', views.edit_profile),
 
@@ -32,8 +24,8 @@ urlpatterns = [
     path('view_drawings/', views.my_drawings),        # List own drawings
     path('all_drawings/', views.all_drawings),        # Gallery
     path('delete_drawing/', views.delete_drawing),
+    path('edit_drawing/', views.edit_drawing),
     path('drawing_detail', views.drawing_detail),
-    path('edit_drawing/', views.edit_drawing, name='edit_drawing'),
     path('edit_feedback', views.edit_feedback),
 
     # --- USER SHOP & VIDEOS ---
@@ -55,19 +47,17 @@ urlpatterns = [
     path("block_user/", views.block_user),
     path("unblock_user/", views.unblock_user),
     path("delete_user/", views.delete_user),
-    path("view_shops/", views.view_shops),
-    path("approve_shop/", views.approve_shop),
-    path("reject_shop/", views.reject_shop),
-    path("block_shop/", views.block_shop),
-    path("unblock_shop/", views.unblock_shop),
 
     # --- ADMIN: VIDEOS ---
     path("add_video/", views.admin_add_video),
-    path("edit_video/", views.admin_edit_video),
     path("delete_video/", views.delete_video),
     path("view_videos/", views.view_videos),
     
     # --- ADMIN: PRODUCTS ---
+    path("add_product/", views.add_product),
+    path("view_products/", views.view_products),
+    path("edit_product/", views.edit_product),
+    path("delete_product/", views.delete_product),
     path("admin_view_drawings/", views.admin_view_drawings),
     
     # --- ADMIN: FEEDBACK ---
@@ -76,6 +66,8 @@ urlpatterns = [
     path("delete_drawing_feedback/", views.delete_drawing_feedback),
 
     # --- ORDERS ---
+    path("admin_view_orders/", views.admin_view_orders),
+    path("update_order_status/", views.update_order_status),
     path("my_orders/", views.my_orders),
     path("user_order_details/", views.user_order_details),
     path("add_product_feedback/", views.add_product_feedback),
@@ -83,11 +75,14 @@ urlpatterns = [
     path("delete_product_feedback_user/", views.delete_product_feedback_user),
     path("delete_drawing_feedback_user/", views.delete_drawing_feedback_user),
 
-    # --- CHAT ---
-    path('chat/<int:receiver_id>/', views.chat_view, name='chat_view'),
-    path('send_message/', views.send_message, name='send_message'),
-    path('my_chats/', views.my_chats, name='my_chats'),
-
+    # --- DRAWING BOOKINGS ---
+    path('book_drawing/', views.book_drawing),
+    path('view_booking_requests/', views.view_booking_requests),
+    path('accept_booking/', views.accept_booking),
+    path('reject_booking/', views.reject_booking),
+    path('my_drawing_bookings/', views.my_drawing_bookings),
+    path('pay_for_drawing/', views.pay_for_drawing),
+    path('view_drawing_payment_details/', views.view_drawing_payment_details),
 ]
 
 if settings.DEBUG:

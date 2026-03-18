@@ -1,0 +1,81 @@
+{% extends "USER/commen.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-section contact-page">
+    <div class="contact-warp">
+        <div class="row">
+            <div class="col-12 mb-4">
+                <h2>Payment Details</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 text-white">Payment Receipt</h4>
+                        <span>Date: {{ payment.date }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5 class="text-muted">Collector Details</h5>
+                                <p class="mb-0"><strong>Name:</strong> {{ booking.buyer.name }}</p>
+                                <p><strong>Email:</strong> {{ booking.buyer.email }}</p>
+                            </div>
+                            <div class="col-md-6 text-md-right">
+                                <h5 class="text-muted">Artist Details</h5>
+                                <p class="mb-0"><strong>Artist:</strong> {{ booking.drawing.user.name }}</p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-3">
+                                <img src="{{ booking.drawing.image.url }}" alt="" style="width: 100%; border-radius: 8px;">
+                            </div>
+                            <div class="col-md-6">
+                                <h5>{{ booking.drawing.title }}</h5>
+                                <p class="text-muted">{{ booking.drawing.description|truncatechars:100 }}</p>
+                            </div>
+                            <div class="col-md-3 text-md-right">
+                                <h4 class="text-success">₹{{ booking.drawing.price }}</h4>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="bg-light p-3 rounded">
+                            <div class="row">
+                                <div class="col-6"><strong>Payment Method:</strong></div>
+                                <div class="col-6 text-right">Card ending in ****{{ payment.account_number }}</div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6"><strong>Name on Card:</strong></div>
+                                <div class="col-6 text-right">{{ payment.name_on_card }}</div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6"><strong>Transaction ID:</strong></div>
+                                <div class="col-6 text-right">ART-{{ payment.id|stringformat:"05d" }}</div>
+                            </div>
+                            <div class="row mt-3 pt-3 border-top">
+                                <div class="col-6"><h4>Total Paid:</h4></div>
+                                <div class="col-6 text-right"><h4 class="text-primary">₹{{ payment.amount }}</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white text-center">
+                        <button onclick="window.print();" class="btn btn-outline-secondary btn-sm mr-2">
+                            <i class="fa fa-print"></i> Print Receipt
+                        </button>
+                        <a href="/my_drawing_bookings" class="btn btn-sm btn-primary">Back to My Bookings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
